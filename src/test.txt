@@ -1,0 +1,2245 @@
+\documentclass[12pt] {ThesisRU}    % changed default font to 12pt
+
+	% preamble stuff here
+\usepackage{graphicx}  % need this for figures etc.
+\usepackage{url}  % to handle urls 
+\usepackage[comma,authoryear]{natbib}    %  includes \citet (textual), and \citep (parenthesized) -- can be used with numbered styles too
+%% include any other packages that you need for your thesis  ....
+
+\renewcommand {\cite} {\citep}  % default for cite is citet in natbib - so change it
+\newcommand {\shortcite} {\citeyearpar}  % for date only citations
+
+% \renewcommand\bibname{References}    % if not using newrucsthesis sty file
+\usepackage[sort,numbers]{natbib}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{listings}
+\usepackage{epigraph}
+\usepackage{minted}
+\usemintedstyle{borland}
+\usepackage{xcolor}
+ \lstset{basicstyle=\small\ttfamily,columns=fullflexible}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+ 
+
+
+\lstset{%
+   breaklines=true
+}
+
+\setminted[JSON]{ %
+    linenos=true,             % Line numbers
+    autogobble=true,          % Automatically remove common white space
+    frame=lines,
+    framesep=2mm,
+    fontsize=\footnotesize
+}
+
+\lstdefinestyle{JS}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\begin{document}
+
+	
+	% Create a title
+
+\title{Exploring the use of IoT and Blockchain Technology in a 3rd Generation Bicycle Sharing Platform within a Smart University Campus}
+\author{ Siphamandla Mjoli}
+\date {\today}
+\maketitle  
+
+\titlepage
+\section*{Abstract}
+This research study advocates for the deployment of an experimental smart transportation platform, specifically a third generation bicycle-sharing platform within the context of a smart university campus which is a surrogate of a smart city. The advocated bicycle-sharing platform integrates the Internet of Things paradigm, blockchain technology, and mobiles devices. Raspberry Pis are used as docking stations and blockchain nodes powered by the proof of authority (POA) consensus mechanism, in turn, creating a permissioned network of docking stations. The bicycle-sharing platform uses smart contracts written in the Solidity programming language to store the business logic which allows users of the smart university campus to rent out bicycles through the mobile application from any of the docking stations around campus.
+\newpage
+
+\titlepage
+\section*{ACM Computing Classification System Classification}  
+%% acm classification stuff here
+Thesis classification under the ACM Computing Classification System\footnote{http://www.acm.org/about/class/2012/} (2012 version, valid through 2017):\\
+
+• Networks~Transport protocols; Point-to-point networks; Peer-to-peer networks; Wire-
+less personal area networks
+
+• Information systems~Relational database model; Structured Query Language; Key-value
+stores; Document representation
+
+• Computer systems organization; Dependable and fault-tolerant systems and networks ;Fault-tolerant network topologies:Blockchain Technology
+
+
+
+\textbf{General-Terms:} Blockchain, Consensus Mechanism, Smart University, Bicycle Sharing,etc.
+
+
+\newpage
+\titlepage
+\section*{Acknowledgements}
+I would like to thank my supervisor, Dr. Nomusa Dlodlo, for her invaluable knowledge and counsel throughout the year. Her constant support and engagement has had a large impact on the research process. In addition, I would like to thank the NRF Foundation, Bradlow Foundation, and HCI Foundation as well as Mr. John Gilliam from the Postgraduate funding office for assisting with information on funding opportunities.
+
+I also would like to express my sincere gratitude to Ms Thami Matiwana for all the help and support with my bursary in my undergraduate studies and for being the intermediary between me and the National Skills Fund who funded my undergraduate studies. To Ms Bagcinile Khumalo of the National Skills Fund, I want to say thank you for believing in me and my dreams even when things seemed like they would never work out. The National Skills Fund didn't give up on me and I am forever grateful.
+
+I would like to thank the Computer Science Department for giving meaning to this qoute:
+\epigraph{
+Love all, trust a few, do wrong to none}{\textit{William Shakespeare}}
+
+I will forever cherish the invaluable knowledge and wisdom.
+
+
+
+
+
+This work was undertaken in the Distributed Multimedia Centre of Excellence (CoE) at Rhodes University, with financial support from Telkom SA, Tellabs/CORIANT, Easttel, Bright Ideas 39, THRIP and NRF SA
+
+(UID 90243). The authors acknowledge that opinions, findings, and conclusions or recommend-
+dations expressed here are those of the author(s) and that none of the above-mentioned sponsors
+
+accept liability whatsoever in this regard.
+\newpage
+\tableofcontents
+
+\newpage
+
+\listoffigures
+\newpage
+
+\listoftables
+\newpage
+
+\chapter{Background}
+One of the core features prevalent in a smart university campus which forms part a of smart citiy is the creation of opportunities for safe and active mobility \cite{woodcock2014health}. Idealizing a shift from the use of motorized modes of transport towards using other modes of transport such as cycling would yield to health and environmental benefits \cite{woodcock2014health}. This could also have environmental benefits such as the reduction in the emission of greenhouse gasses \cite{maizlish2013health}. One of the many ways in which smart university campuses can take advantage of these benefits is by implementing bicycle sharing platforms \cite{mueller2015health}. How these platforms generally work is as follows
+\begin{itemize}
+    \item A user can borrow a bicycle from any of the self-service stations located around the city or university campus
+    \item The user can then drop off this bicycle at another self-service station located somewhere in the city or university campus
+\end{itemize}
+This creates some form of public transport system \cite{bikesharingworld}.
+The Internet of Things \cite{ho2016smart} is a developing industry that is concerned with enabling tiny sensing and non-sensing hardware devices to consume small pieces of data in various ways, and for different application environments \cite{kelly2013towards}. The rapid growth of interest in IoT has led to an increase in the demand and commoditization of a variety of cyber-physical devices for personal and commercial use. These devices include wearable devices, smart home appliances and the design of new car models, and have aggrandized their mechanical counterparts to allow the integration of electronic components, such as micro-computers to control them remotely. This integration expands the functionality of these cyber-physical devices. 
+Blockchain Technology one of the most ingenious technological inventions has evolved into something extravagant since it's in inception in 2009. By enabling digital information to be distributed in a trustworthy manner this technology serves as the backbone of a new type of Internet coined as digital currency \cite{crosby2016blockchain}. The Blockchain in simple terms can be described as a time-stamped series of immutable records of data that is distributed and managed by a cluster of computers \cite{crosby2016blockchain}, these computers do not belong to any single entity. These records are stored in data structures known as Blocks, every single Block is secured and connected to other Blocks through the use cryptographic principles \cite{pilkington201611}. Blockchain Technology in this research project will be used to store sensitive user information such as user passwords and Ids as well as create a decentralised way of sharing and storing information.
+
+\section{Problem Statement}
+The problems identified as motivation to conduct the study are as follows.
+\begin{itemize}
+\item Rhodes University (RU) having the smallest campus in the country \cite{poor2010valuation}, often students have difficulty finding parking space.
+\item A large number of students who live in the upper part of the campus have to walk quite a distance to the central campus in order to attend lectures and practicals.
+\end{itemize}
+As such the research problem to address is to develop a smart transportation system specifically a bicycle sharing platform that integrates with IoT, Blockchain and Mobile devices  within the context of a smart university campus such as RU. 
+
+
+\section{Aims and Objectives}\label{aimsAndObjectives}
+The objectives of this research project are as follows: 
+\begin{itemize} 
+\item Determine the requirements and specifications for integrating IoT,Blockchain Technology, Smart Locks, and Mobile devices to aid in the development of a Bicycle sharing platform.
+\item Carry out the requirements elicitation and analysis for integrating IoT,Blockchain Technology, Smart Locks, and Mobile devices for the Bicycle sharing platform.
+\item Develop a mobile-controlled Bicycle sharing platform.
+\item Conduct an evaluation of the Platform and mobile application for usability and acceptability.
+\end{itemize}
+
+\section{Limitations}
+The limitations of the research project can be broken down into the following subsections.
+\subsection{Complexity}
+The Integrated Platform will rely on the communication between the docking stations which will be represented by raspberry PI's, bicycles, mobile devices and the smart locks. In the case of the raspberry pi short circuiting the docking station will become vulnerable, because communication amongst the different Things will be disturbed. 
+
+\subsection{Bicycles}
+The bicycles on the platform will face numerous security threats which have been listed below in the form of scenarios:
+
+\begin{enumerate}
+\item In the case where a user decides to ride the bicycle out of campus and it getting stolen
+\item Parts of the bicycle being stolen 
+\item Bicycle not being parked in one of the parking stations around campus
+\item Vandalism of parking stations
+\end{enumerate}
+
+As such the aforementioned, security threats are out of the scope of the research project and will not be taken into consideration during the duration of the research.
+\chapter{Preliminary Literature Review}
+In order to be successful in achieving the objectives of the research project, it's imperative to look at the various publications that relate to the different aspects of the research project. This will ground our knowledge and understanding of the various aspects of the research project.
+
+\section{Bicycles Sharing Platforms}
+Bicycle sharing platforms have been expeditiously growing in the past decade \cite{fishman2016bikeshare}. Even though the concept of bicycle sharing was first implemented in the early 1960s the number of cities that have since implemented these systems have increased to over 800 from just a handful in the 1990s \cite{fishman2016bikeshare}. Witte Fietsen which translates to \textbf{White Bikes} was the first ever bicycle sharing platform to be launched in Amsterdam in 1965 \cite{pojani2015sustainable}. This bicycle sharing system consisted of white painted bicycles which were placed on the streets of Amsterdam, people could use these bicycles free of charge. The growth of bicycle sharing system soon experienced a decline due to the failure of \textbf{Witte Fietsen}, this failure was caused by a heavy absence of security mechanisms which created opportunities for theft and vandalism \cite{pojani2015sustainable}. Bicycle sharing systems have been categorized into four generations \cite{parkes2013understanding}, the 1st generation which is characterized by a lack of security and payment mechanisms similar to that implemented in Witte Fietsen \cite{parkes2013understanding}. The 2nd generation of bicycle sharing platforms consisted of a coin deposit system similar to those used in trolley systems at supermarkets as well as airports \cite{demaio2009bike}. The largest ever 2nd generation platform was launched in Copenhagen in 1995 \cite{pojani2015sustainable}. With no mechanisms of user tracking this generation of bicycles sharing platforms soon faced security concerns, such as theft due to anonymity \cite{demaio2009bike}. The failure of the first 2 generations of bicycle sharing platforms lead to the development of the 3rd generation, this generation of bicycle sharing platforms was characterized by \cite{parkes2013understanding}
+\begin{itemize}
+\item Dedicated parking stations where bicycles could be picked up and parked
+\item Automated Credit card payment systems
+\item GPS systems to allow the tracking of bicycles 
+\end{itemize} 
+The 4th generation of bicycles sharing platform's still lacked definition as to what characteristics should be inherent within this generation. It is said that this generation could potentially include power and transit smart card integration, power assistance, as well as dock less systems \cite{buck2013bikeshare}.
+
+
+\section{The Internet of Things}
+The launch of the Internet changed our lives in various ways, with the rapid increase in the development of IoT our lives will soon change again. From the time the Internet was introduced as Apranet in 1969 to drastically evolving to what we now know as social network's, it's been a crucial driving force the high-tech industry \cite{yeo2014internet}. \\It's estimated by the year 2020 a total of 20 billion IoT enabled devices will be connected and a profit of \$10 trillion will be generated over the next 20 years \cite{yeo2014internet}. IoT will have a commanding impact in the high-tech industry in general.
+
+\subsection{The Impact of IoT}
+Nowadays Information sharing and communication between devices is pervasive and does not require any human intervention and interaction \cite{yeo2014internet}. This characteristic leads to the aggrandizement of the number of applications that can benefit from this untrammeled automatic device-to-device communication. The various IoT devices used for tracking and monitoring are generally small chips and require minimal processing capabilities \cite{kelly2013towards}. \\
+
+
+\subsection{Communication in IoT}
+The Internet of Things employs various mediums to allow devices to communicate as well as track other devices these mediums are listed below \cite{gupta2015survey}.
+\begin{itemize}
+\item Global System for Mobile Communication in short GSM is a widely used digital mobile network infrastructure it utilizes a variation of TDMA which expands to Time Division Multiple Access \cite{agiwal2016next}
+\item The General Pack Radio Service is a communication service that offers data transfer rates starting from 56 upto 114 Kbps, constant connection to the internet for mobile device \cite{gupta2015survey}. This communication service is a packet based . 
+\item Bluetooth is a communication medium that allows devices to communicate with each over a short range.
+\end{itemize}
+
+\subsection{Sensing in IoT}
+The following technologies are used to detect temperature, humidity, vibration, as well as pressure and altitude.
+\begin{itemize}
+\item RFID which expands to radio frequency identification is a technology where by RFID tags are encoded with digital data which can then be captured by a reader through radio waves \cite{finkenzeller2010rfid}
+\item Near Field Communication in short NFC is a technology that whereby chips can activate one another when in proximity without the use of the internet \cite{tan2014nfc}.
+\end{itemize}
+
+\section{Mobile Devices}
+Mobile devices have incredibly simplified our lives in various ways, by interlinking IoT with mobile devices we can leverage the advantages of both technologies we can further simplify our lives.
+\section{Wearable Devices}
+Wearable devices are an important aspect of IoT solutions, with features like Bluetooth and Wi-Fi which are inherent within these devices \cite{ho2016smart}. We can easily connect wearable devices such as wrist watches, bands or even eyeglasses to our mobile devices. Which in turn allows mobile devices to exchange information with the wearable device automatically.
+
+\section{Healthcare Devices}
+The development of home based healthcare devices is rapidly increasing and has become more popular in recent years \cite{ho2016smart}, these devices leverage the features of IoT application development in various ways. These devices work as follows \cite{ho2016smart}.
+
+\begin{itemize}
+    \item Sensors which are configured to collect data are attached to patients
+    \item These sensors than send the data they collect to the mobile application installed on the mobile device 
+    \item The data can then be sent from the mobile application to the respective doctor 
+\end{itemize}
+\section{Home Automation Devices}
+The Internet of Things has lead to the development of a new generation of home appliances, these appliances include locks,bulbs, heating and cooling systems which the ability to be controlled remotely \cite{pavithra2015iot}.
+
+\section{Smart Locks}
+Smart locks \cite{ho2016smart} are characterized as having the ability to be controlled through various communication devices such as mobile devices . By utilizing various communication devices these locks make the process of granting access to third parties for instance into your home from a distance easier. The physical keyless nature of these locks takes away the hassle of having to worry about losing a key.
+
+\section{Blockchain Technology}
+Satoshi Nakamoto introduced Bitcoin a public immutable ledger which he referred to as The Blockchain \cite{novo2018blockchain}. Bitcoin having been the first widely used implementation of a peer to peer trustless electronic cash system, lead to the creation of many similar cash structures called Cryptocurrencies. Several applications that would benefit from using The Blockchain either than Cyptocurrencies have since been developed over the years. The introduction of The Blockchain has lead to the creation of new concepts such as Smart Contracts and Smart Properties which have been introduced to the Blockchain spectrum, these concepts act as intermediaries between The Blockchain and human interaction. Smart Contracts provide the ability to create, track, and execute complex electronic agreements between  several parties without any human interaction, whereas Smart Properties are electronic agreements which are manged and controlled through Smart Contracts \cite{novo2018blockchain}. Blockchain technology has several properties which include the following:
+\begin{itemize} 
+    \item Decentralized Control \\
+     This is the core feature of The Blockchain this property states that no central authority which can dictate rules exists within the Blockchain.    
+     \item Data Transparency and Auditability \\
+     This feature of the Blockchain states that every transaction that occurs on the Blockchain is stored amongst all peers on the Blockchain in a public manner 
+     \item Distributed Information \\
+     This feature of the Blockchain states that all peers within the Blockchain keep a copy of the Blockchain to prevent any central authority from privately manipulating and keeping the information.
+     \item Decentralised Authority \\
+     This feature of the Blockchain states that all transaction that occur on the Blockchain have to be validated by all peers of the network, this concept eliminates the concept of centralised consensus
+     \item Secure \\
+     The decentralisation of the Blockchain makes it tamper proof and secure from malicious peers on the Blockchain\\ \\
+      \subsection{Application of Blockchain Technology in the Proposed Bicycle Sharing Platform}
+      The Bicycle Sharing Platform will take advantage of a few of the above properties, the first 2 being Decentralised control and the Distributed Information of the Blockchain. By digressing from the conventional reliance of a central server the platform will have docking stations which will each serve as nodes that store and share information amongst each other meaning no central server will be required. With sensitive information such as student passwords,student id's being used to access the Bicycle Sharing Platform its imperative that this information is stored in a secure and tamper-proof manner. The Platform will benefit from the decentralisation and security provided by the Blockchain. 
+\end{itemize}
+
+\chapter{Literature Review}
+ 
+ \nocite{*}
+A Smart University Campus \cite{rohs2003entry} can be described as an application environment for the ubiquitous computing paradigm, this application environment consists of a large number of users who share their information. The shared information consists of information relating to places on the university campus that users visit, the number of users on the university campus at a particular time and physical objects such as vehicles that enter and leave the university campus.  The enclosed sections discuss the various aspects of the research topic such as Characteristics of Smart Cities which umbrellas a smart university campus, IoT more specifically the different application use cases and their architecture, Smart Locks,Mobile Computing and Devices ,Components of Bicycle Sharing platforms, and Blockchain Technology.
+
+\section{Smart City}
+The functioning of a Smart City \ref{torres2015enhancing} relies on 6 key factors mainly, Smart People, Smart Governance, Smart Environment, Smart Mobility and Smart Living . These factors serve as a foundation in understanding a smart city initiative or projects, the requirements that need to be considered in the design of any application use case and factors that could hinder the success of the smart city. 
+
+\subsection{Smart People and Smart Living}
+People are an imperative part of a smart city \cite{torres2015enhancing}, projects within the context of a smart city have a huge impact on the quality of life the citizens of the smart city and are aimed at informing and educating the citizens.  Smart city initiatives allow members of the city to participate in management and governance of the city and become the driving force of these initiatives. 
+\subsection{Smart Governance}
+Cities around the world have started smart city initiative projects that aim at transforming the and improving the quality of life of its citizens \cite{rajaprabha2018iot}, These smart city initiatives involve several stakeholders which brings rise to improved governance that is capicitated to handle these initiatives. The emergence of ICT that aims at improving the smart city governance has benefited several cities around the world, this type of governance is coined as smart governance and includes an array of technologies, people, policies, practices, resources, social norms and information that interact to support city governing activities. \cite{rajaprabha2018iot} states that smart city governance is the core of smart city initiatives.
+\subsection{Smart Environment}
+Transformation initiatives such as smart cities, are generally forward looking on the environmental front \cite{chourabi2012understanding}, the use of technology to increase sustainability and better manage natural resources of a particular interest. Natural resources such as waterways, sewers and green spaces such as parks have a huge impact on the livability and sustainability of a city and should be prioritized during the planing and design of smart city initiative projects.
+
+\subsection{Smart Mobility} \\
+The Smart City Mobility aspect of a smart city presents a remarkable breadth of content and implications due to the vast number of factors which are connected \cite{benevolo2016smart}, factors that form part of smart mobility include \cite{benevolo2016smart}
+\begin{itemize}
+    \item Public Mobility: Vehicles and innovative transport solutions \\
+    This factor is concerned with initiatives carried out by organisations and or companies in supplying local communities within the smart city with transportation services, this factor is composed of actions of different nature but characterised by a common factor, which is to positively impact the quality of public transport under different points of view.
+    \item Private and Commercial Mobility: Vehicles and innovative transport solutions\\
+    This factor relates to initiatives taken upon by private citizens and companies, even if supported and stimulated by public policies. It consists of an array of interventions that affect both the introduction of vehicles with certain
+characteristics, and actions regarding the mode of transport which affect citizens of a smart city behaviour. Car sharing services are pervasive within this factor, these services allow citizens of a smart city to reserve cars through several mediums and pick these cars up at parking lot in the city and paying due to the use made. 
+    \item Infrastructure and policies supporting mobility  \\
+   This factor includes infrastructural projects which, affect urban mobility: 
+   An example of such a project is the creation of bicycle lanes or the creation of lanes which aim at reducing the amount of traffic in traffic congested zones around the city. The creation of bicycle lanes is an intervention that is linked to the usage of bicycles as a means of public/private transportation which could have environmental benefits.
+\end{itemize}
+\section {The Internet of Things} 
+The ecosystem inherent within currently deployed IoT systems is that of low powered devices equipped with sensors that consume data \cite{shafagh2017towards}. The data these devices collect is then stored in use case specific applications, which are connected through application layer gateways that allow these devices to connect to 3rd party Cloud storage platforms for further processing. This stratified architecture \cite{zachariah2015internet} has created data silos that introduce complexities such as limited user control and lack of solicitation regarding the usage of user data. Users are then coerced to rely on 3rd party intermediaries such as Cloud and Application providers to secure and make available their data when required. Security mechanisms implemented in current IoT systems focus less on the life cycle of the data instead focus on securing point-to-point communication \cite{kelly2013towards}. Cloud-based models deployed in IoT devices mainly handle Authentication, Identification, Connectivity, these models have lead to the aggrandizement of the IoT ecosystem \cite{shafagh2017towards}. The focus on centralization and lack of locality of these cloud-based models make them not the best suited for IoT devices and thus require the rethinking of current mechanisms of handling  IoT data by introducing independent and resilient data management systems instead of entrusting 3rd parties with user data \cite{satyadevan2015security}. The underlying design of these resilient data management systems is based on Blockchain technology and aims at resolving issues such as  Ownership of data by users, IoT compatibility (Low resourced ecosystem), Decentralisation and secure data storage, Auditable data access control of user data. Current cloud-based systems provide the 1st 2 mentioned points but not consistently, blockchain data management system aim at improving on this inconsistency \cite{shafagh2017towards}. The underlying features of Blockchain technology such as,Autonomy, Self sustaining, Decentralised Storage Ecosystem will enable participants of the Blockchain network usually who's responsibility is to store data to be rewarded for providing their storage resources and bandwidth to IoT devices.
+
+\subsection{Related IoT Based Systems}
+In this section, we will examine some of the already deployed systems that utilize IoT devices.
+\subsection{Smart Parking Management System}
+With the ever growing economy, vehicle users are increasing at a rapid rate which has lead to an increase in the demand for parking spaces. The increase in growth of IoT has macadamized for the integration of Wireless Communication Technologies, Mobile Devices, and Mobile Applications \cite{lee2016smart}. Smart  Parking Management systems are classified as having the following features
+\begin{itemize}
+    \item Allow user to reserve a parking space
+    \item Authenticate a  reserved user
+    \item Identify nearest free parking space based on the size of the vehicle
+    \item Compute account of the user on a daily basis
+\end{itemize}
+The availability of a free parking slot and its locations is transmitted through the use of several technologies such as
+\begin{itemize}
+    \item WiFi module technology \\
+    This technology is a self contained system on chip (SOC) with integrated TCP/IP protocol stack that can give any micro-controller access to your WiFi network. \cite{wenbo2015smart}
+    \item Micro-controllers\\
+    Micro-controllers are computer chips present in a single integrated circuit which is responsible for execution specific takes or application. \cite{wenbo2015smart}
+\end{itemize}.
+Scheduling Algorithms are used to identify the nearest free slot which it basis of the size of the vehicle \cite{lee2016smart}.
+
+\subsection{Purpose of Smart Parking Systems}
+The idea behind the development of a Smart Parking System is to reduce the time it takes a vehicle user to locate parking areas. Developing countries face problems in managing free parking space systems \cite{suhr2016automatic} hence the need for the development of systems that help mitigate these difficulties. Conventional Parking management systems fail to address the issue of open and closed parking, the general use of these systems allows the user to find a parking space through a Mobile Application which then uses its GPS to connect to the Google Maps API to find a free parking spot. Problems identified with this approach are as follows
+\begin{itemize}
+    \item It has very low accuracy in detecting the exact location of the parking spot
+    \item Does not work very well in weather conditions
+\end{itemize}  \cite{lee2016smart}.
+\newpage
+\subsection{Types of Smart Parking Management Systems}
+In this section, we will examine Vehicle Smart Parking Systems which utilize the following technologies
+\begin{itemize}
+    \item Ultrasonic Sensors and Cloud-based storage
+    \item IoT and Google Maps
+    \item Arduino and Raspberry Pi
+    \item Embedded Systems 
+    \item Zigbee and RFID
+     \item Radio Frequency Identification (RFID) and Infrared Sensors (IR)
+\end{itemize}
+
+\subsection{Ultrasonic Sensors and Cloud-based Storage}
+\cite{shinde2017iot} proposed a system that uses the Googles Maps API, data collected by Ultrasonic Sensors is stored on the cloud, this data can then be accessed through a Mobile application such as that built for the Android Operating system. Each parking slot has one LED display parking which aids in finding the right parking slot. 
+\subsection{IoT and Google Maps}
+In this Smart Parking System, a mobile application is used as an intermediary to allow the user to reserve a parking slot by connecting to the Google Maps API.
+\newpage
+\subsection{Radio Frequency Identification (RFID) and Infrared Sensors (IR)}
+Smart Parking systems that utilize RFID  and IR technologies to allow users to reserve work as follows
+\begin{enumerate}
+    \item An IR sensor is used to locate a vacant parking spot in the parking area
+    \item All available parking spaces are displayed at the entrance and exit of the parking area
+    \item A RFID tag is issued to the user when they select a vacant parking sport
+    \item Additional checks such as the validity and if the user is authorized to reserve a parking spot are undertaken
+    \item If the user is valid a signal is sent to open the gate
+\end{enumerate} \cite{lee2016smart}
+
+\subsection{Adruino and Raspberry PI}
+In this system Adruinos and Raspberry PI's are used to detect free slots, a web server is used to log all parking space reservations made by users, the Google Maps API is used to display the reserved spots \cite{roman2018detecting}.
+
+\subsection{Zigbee and RFID}
+Smart Parking systems that utilize Zigbee and RFID technology generally reffered to as Effective Vehicle Smart Parking Systems \cite{sheelarani2016effective}.  these systems use IR sensors are used to detect free parking slots, RFID tags are used for authentication whilst ZigBee is used for communication. A Mobile Application is usually present to serve as an intermediary to allow users to access parking spot information.
+
+\subsection{Embeded Systems}
+These systems use Embedded Sensor Networks that utilize applications that run on Windows and Android operating system \cite{pham2015cloud}, Raspberry PI's and IR sensors are used to locate vacant parking slots, the V2I protocol coined as Vehicle To Infrastructure is used for communication between the driver requesting a parking spot. When an I2V (Infrastructure to Vehicle) request is sent it contains data such as that of the user as well as directions to the requested parking spot. 
+
+\subsection{Smart Grid Architectural Overview}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{Images/Capture.PNG}
+\caption{\label{fig:grid}Adapted from\cite{hua2014internet}:Overview of a typical Smart Grid System Architecture.}
+\end{figure}
+The widely accepted IoT architecture for a Smart Grid system as described as being divided into 3 layers mainly the Application, Network as well as the Perception layer see figure \ref{fig:grid}. 
+
+\subsection{Application Layer}
+The Perception layer\cite{hua2014internet} is generally divided into 2 layers mainly the Perceived layer and the Communication extended layer. The perceived layer utilizes devices such as RFID enabled devices cameras and other sensors to gather information. On the other hand, the extended communication layer is integrated with the top 2 floors by a way of a communication module or addition to the network, this layer is generally used to monitor power systems data it also uses wireless sensor technology in certain instances.
+
+\subsection{Network Layer}
+The Network layer \cite{hua2014internet} serves as an intermediary between the Application layer and the Perception layer. It is responsible for transmitting information of any kind in the wide area between the Application layer as well as the Perception layer within a Smart Grid system. The design of the Network layer is based power fiber optic network integrated with power line carrier communication and wireless broadband network.
+
+\subsection{Application Layer}
+The Application layer is the heart of IoT applications in Smart Grid systems \cite{yu2016smart}, in this layer all applications that are Smart Grid oriented are involved in all aspects of management and or production. This layer is responsible for implementing intelligent computing pattern recognition and other technologies to aid in analyzing data which leads to intelligent decision making and or control and services.
+
+\subsection{Wind Prediction: An Example of a Smart Grid Application Integrated with IoT}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{Images/wind.PNG}
+\caption{\label{fig:frog}Adapted from\cite{yu2016smart}:Overview of a Wind IoT based Smart Grid Applications Architecture.}
+\end{figure}
+IoT in Wind Power Prediction\cite{hua2014internet} is integrated through the use of Wireless Sensor Networks (WSN), data is collected in real time and used to predict power changes. How the data is collected, transmitted and analyzed is shown in figure 3. Wind turbines are monitored by the monitoring center in real time through the use of Wireless Sensor Networks, the data collected is then transmitted through to the prediction server, the scheduling server can also receive transmissions from the wind power station. Once this transmission is received the scheduling server will aggregate the results from the prediction server and transmit it to the dispatcher workstation. This way wind power prediction is achieved in both local and remote control through the power station and scheduling server.
+
+\section{Mobile Devices}
+The idea of Mobile Computing was first introduced by Guglielmo Marconi \cite{johnson1996mobile}, in 1894 he produced radio waves over a long distance, this preoperative event pioneered both wireless and mobile computing technology. In 1958 Germany, the first wireless network was developed, with the first ever personal mobile device developed by Motorola being introduced in 1983. These inventions marked the creation of what we know now as the Mobile Computing Industry, this industry has been growing at an exponential rate. The proliferation of the Mobile Computing industry has led to the proliferation and usage of Mobile Devices which have become a fundamental aspect of our daily lives \cite{punja2008mobile}.
+
+\subsection{Applicability Of Mobile Devices}
+\subsection{Users}
+The purpose of a piece of technology derived by a user has reverberations on how they use the Mobile Device. Mobile Devices provide utilitarian functions that enable services such as  Streaming Services, Distant Education, E-Commerce, Distant Banking \cite{wakefield2006mobile}. The derived perception of the user regarding Mobile Devices is imperative in the sense that if the view is inclined towards functionality, certain beliefs by the user such as for instance the ease of use, the usefulness of the Mobile Device may digress from that of those who view Mobile devices as being hedonic. 
+
+\subsection{User Centered Services in Mobile Devices}
+In this section, we are going to discuss applications that are centered for Users of Mobile Devices.
+
+\subsection{Wearable Devices}
+Wearable devices are an important aspect of IoT solutions, with features like Bluetooth and Wi-Fi which are inherent within these devices \cite{ho2016smart}. We can easily connect wearable devices such as wrist watches, bands or even eyeglasses to our mobile devices. Which in turn allows mobile devices to exchange information with the wearable device automatically.
+
+\subsection{Implantable, Miniaturized and Unobtrusive Devices}
+Clip-free eyeglasses-based device for heart rate and PTT measurement, Shoe Mounted Systems used to asses the foot and ankle dynamics are examples of unobtrusive devices that have been developed \cite{zheng2012clip}, with the aim of providing measurements in a ubiquitous and unobtrusive manner.
+A variety of sensing devices have been introduced that do not require to be worn on the body but implanted into the human body an example of such a device is the wireless Haemodynamic monitoring system whose aim is to provide long term measurements of patients with heart failure arterial pressure \cite{adamson2011champion}. 
+
+\subsection{Healthcare Devices}
+Factors such as the high prevalence of chronic diseases in the aging population and the rapid increase in the cost of treating these diseases are some of the many factors that affect the global health care system \cite{zheng2014unobtrusive}. These identified factors can be mitigated through the use of innovative solutions and or technologies that aim at improving the quality of patient care whilst reducing the costs associated with patient care. Health Informatics an emerging field of study whose aim is to advance P-Health mainly deals with the following 
+\begin{itemize}
+    \item The Acquisition of Patient Health and Biomedical Information through the use of sensing and or Imaging 
+    \item The Transmission of Patient Health and Biomedical Information
+    \item The Processing of Patient Health and Biomedical Information
+    \item The Storage of Patient Health and Biomedical Information
+    \item The Retrieval of Patient Health and Biomedical Information
+\end{itemize} \cite{zheng2014unobtrusive}.
+
+\section{Smart Locks}
+Smart locks \cite{ho2016smart} are characterized as having the ability to be controlled through various communication devices such as mobile devices. By utilizing various communication devices these locks make the process of granting access to third parties for instance into your home from a distance easier. The physical keyless nature of these locks takes away the hassle of having to worry about losing a key.
+ 
+\subsection{Characteristics of Smart Locks}
+Smart Locks used in homes consist of the following characteristics 
+\begin{itemize}
+    \item Electronic Augmented Deadbolt usually installed on the exterior of a door
+    \item A Mobile Application used to remotely control the smart door lock
+    \item Remote Server which communicates with the Lock and Mobile Application
+\end{itemize}. There are 2 mainly used architecture designs used by current Smart Lock Systems are
+\begin{itemize}
+    \item Device Gateway Cloud Model (DGC) in this model the lock does not have direct access to the internet but instead depends on the user's Mobile device to connect to the internet in this architecture the mobile device acts as a gateway to the internet.
+    \item  The second architecture is a variation of the DGC Model, instead of relying on the users Mobile Device as a gateway to the internet the lock its self is directly connected to the internet.
+\end{itemize}
+
+\subsection{Digital Keys}
+Smart Locks within the context of a home allow users who own these locks to grant access to their home through the issuing of Digital Keys. Digital Keys \cite{ho2016smart} are be described as unique long strings of text that ensure that user has the necessary permissions when accessing a user's home for a given time period and are convenient and allow for greater fined grained access control.
+
+\subsection{The Role of Application Programming Interface (API) in Smart Locks}
+Smart Locks provide a standalone Web interface to allow users who own the Smart Lock to perform certain administrative operations related to the Smart Locks such revoking access to their home is granting access to their home.
+\subsection{Access Logs}
+Logs are an imperative part of Smart Locks as they keep track of every user interaction with the lock and can provide verbose details about user interaction at any period and time.
+
+\section{Bicycle Sharing Platforms}
+Witte Fietsen which translates to \textbf{White Bikes} was the first ever bicycle sharing platform to be launched in Amsterdam in 1965 \cite{pojani2015sustainable}. This bicycle sharing system consisted of white painted bicycles which were placed on the streets of Amsterdam, people could use these bicycles free of charge. The growth of bicycle sharing system soon experienced a decline due to the failure of \textbf{Witte Fietsen}, this failure was caused by a heavy absence of security mechanisms which created opportunities for theft and vandalism \cite{pojani2015sustainable}. Bicycle sharing systems have been categorized into four generations \cite{parkes2013understanding}, the 1st generation which is characterized by a lack of security and payment mechanisms similar to that implemented in Witte Fietsen \cite{parkes2013understanding}. The 2nd generation of bicycle sharing platforms consisted of a coin deposit system similar to those used in trolley systems at supermarkets as well as airports \cite{demaio2009bike}. The largest ever 2nd generation platform was launched in Copenhagen in 1995 \cite{pojani2015sustainable}. With no mechanisms of user tracking this generation of bicycles sharing platforms soon faced security concerns, such as theft due to anonymity \cite{demaio2009bike}. The failure of the first 2 generations of bicycle sharing platforms lead to the development of the 3rd generation, this generation of bicycle sharing platforms was characterized by \cite{parkes2013understanding}
+\begin{itemize}
+\item Dedicated parking stations where bicycles could be picked up and parked
+\item Automated Credit card payment systems
+\item GPS systems to allow the tracking of bicycles 
+\end{itemize} 
+The 4th generation of bicycles sharing platform's still lacked definition as to what characteristics should be inherent within this generation. It is said that this generation could potentially include power and transit smart card integration, power assistance, as well as dockless systems \cite{buck2013bikeshare}
+
+\subsection{Types of Bicycle Sharing Platforms}
+Bicycle sharing platforms can be distinguished into 2 types \cite{midgley2011bicycle} mainly
+\begin{itemize}
+    \item Automated 
+    \item Manual 
+\end{itemize} The distinguishing factor being with manual Bicycle Sharing Platforms all transactions related to the renting out of a Bicycle are supervised by staff members. Information technology is seldomly used for keeping track of Bicycle use and monetary transactions, these systems heavily utilized for instances where Platform has multiple drop of and pick up stations around a city. On the other hand, Automated Bicycle Sharing Platforms are unsupervised, all transactions related to the renting of Bicycles is done through self-service stations. Bicycles on these types of systems are locked using electronic controlled racks with some being equipped with electronically controlled locks. Docking racks are equipped with the following systems to enable the renting of Bicycles
+\begin{itemize}
+    \item Coin-based System \\
+    These systems allow users of bicycles to pay for the usage of the bicycle
+    \item Credit Card based System \\
+    These systems allow users to electronically pay for the usage of bicycles
+    \item Electronic Key card System \\
+    These systems allow users to unlock bicycles based on uniquely assigned magnetic chips which have been credited with electronic for users to rent out bicycles.
+    
+\end{itemize}
+
+\subsection{Typical Components of a Bicycle Sharing Platform}
+\subsection{Bicycles}
+Bicycle Sharing Platforms\cite{buck2013bikeshare} usually consist of Bicycles who's weight ranges between 16kg to 22kg, these bicycles are much heavier than normal consumer bicycles and are designed to be used in any weather condition. These bicycles are generally equipped with the following
+\begin{itemize}
+    \item A Radio Frequency Identification also coined as RFID tag \\ 
+    Used to identify the bicycle
+    \item A Global Positioning System coined as GPS \\
+    Used to track the location of the bicycle around the city
+\end{itemize} 
+These technologies aid in cases were a bicycle has either gone missing or is stolen.
+\newpage
+\subsection{Docking Stations}
+Bicycle Sharing Platforms \cite{buck2013bikeshare} consists of Docking Stations which can be classified as follows
+\begin{itemize}
+    \item Flexible Docking Stations
+    \item Fixed Permanent Docking Stations
+    \item Fixed Portable Docking Stations
+\end{itemize}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{Images/bike.PNG}
+\caption{\label{fig:frog}Adapted from \cite{buck2013bikeshare} Pictures illustrating the different types of docking stations.}
+\end{figure}
+\subsection{Flexible Docking Stations}
+Bicycles docked in these types of Docking Stations are not equipped with any locks but rather use either a chain or a cable used to lock these bicycles at any of the designated docking stations.
+\subsection{Fixed Permanent Docking Stations}
+Bicycles docked in these types of Docking Stations are docked in designated docking stations through the use of a specialized coupling system. \\
+\subsection{Fixed Portable Docking Stations}
+Bicycles in these types of Docking stations are docked in rectangular platforms and are referred to as Portable Modular Stations powered by 2 types of sub Docking Stations which are
+\begin{itemize}
+    \item Main Module
+    \item Secondary Module
+\end{itemize}
+The Main module consists of a service terminal and 3 bicycles. On the other hand, a Secondary Module consists of a single bicycle, these types of docking stations require a single Module and in some instances a Secondary Module depending on the number of bicycles required. Fixed Portable Docking stations are characterized by the following  \cite{buck2013bikeshare}
+\begin{itemize}
+    \item Solar Powered \\
+    This relates to the docking station having solar panels installed in its premise which in turn powers the locking system of the bicycles docked.
+    \item Self Contained  \\
+    This refers to the docking not requiring any human intervention in order to operate
+    \item Wireless Networked \\
+   This refers to the utilization of the IEEE 802.11b protocol without modifications to communicate between sensors and actuators in a production line environment
+    \item Wireless installation \\
+    This refers to the remote installation of any software updates required by the docking stations operation system
+\end{itemize}.
+
+\subsection{User Registration and User Access}
+When a user wants to access a bicycle there are 2 main technologies used to enable access to the user 
+\begin{itemize}
+    \item Smart Card or Magnetic Strip
+    \item Automated Lock which communicates with a Mobile Application or a pay phone for token access
+\end{itemize}
+Before a user is allowed access to the Platform they will have to register using the platforms mobile application or through a designated kiosk located around the city.
+
+\section{Blockchain Technology}
+Satoshi Nakamoto introduced Bitcoin a public immutable ledger which he referred to as The Blockchain \cite{novo2018blockchain}. Bitcoin having been the first widely used implementation of a peer to peer trustless electronic cash system, led to the creation of many similar cash structures referred to as  Cryptocurrencies. Several application use-cases that would benefit from using Blockchain technology either than Cyptocurrencies have since been developed over the years. The introduction of The Blockchain has lead to the creation of new concepts such as Smart Contracts and Smart Properties which have been introduced to the Blockchain spectrum , these concepts enable access to The Blockchain and human interaction. Smart Contracts provide the ability to create, track, and execute complex electronic agreements between  several parties without any human interaction, whereas Smart Properties are electronic agreements which are manged and controlled through Smart Contracts \cite{novo2018blockchain}. Blockchain has several properties which are dissected in the following subsections.
+
+\subsection{Properties of Blockchain}
+Blockchain Technology has a spectrum of potential application use cases which expand far beyond Satoshi's peer to peer trustless electronic cash system also referred to as Bitcoin, the properties of Blockchain are as follows \cite{panarello2018blockchain}
+\begin{itemize} 
+    \item Decentralized Control \\
+     This is the core feature of The Blockchain this property states that no central authority which can dictate rules exists within the Blockchain.    
+     \item Data Transparency and Auditability \\
+     This feature of the Blockchain states that every transaction that occurs on the Blockchain is stored amongst all peers on the Blockchain in a public manner 
+     \item Distributed Information \\
+     This feature of the Blockchain states that all peers within the Blockchain keep a copy of the Blockchain to prevent any central authority from privately manipulating and keeping the information.
+     \item Decentralised Authority \\
+     This feature of the Blockchain states that all transaction that occur on the Blockchain have to be validated by all peers of the network, this concept eliminates the concept of centralised consensus
+     \item Secure \\
+     The decentralisation of the Blockchain makes it tamper proof and secure from malicious peers on the Blockchain
+\subsection{Trust Within a Blockchain Eco-System}
+Trust within the Blockchain Eco-system is achieved through the use of distributed ledger protocols also known as a consensus protocol \cite{cachin2017blockchain}. A distributed ledger protocol is responsible for ensuring that tasks are executed, aspects such as atomicity, total order, and liveness semantics are satisfied and consistent. The distributed nature of the Blockchain and anonymity of the entities that form part and control Blocks within the Blockchain Network requires special integrity measures to be in place, in the instance of potentially malicious Byzantine Environments. An example of such a measure is inherent within The Nakomoto Style Proof of Work Consensus which requires that a Block hash be smaller than a given target. In the instance that an entity within a Blockchain Network for instance chooses to act against the common goal of the network, or a network interruption occurs The Blockchain Network needs to implement a consensus protocol that is fault tolerant to ensure that the various aspects of the network such as 
+\begin{itemize}
+    \item The data stored on the Network
+    \item The way which Blocks are added to the Network
+    \item The replication of the data amongst entities that form part of the Network
+\end{itemize}
+are consistent, this is to strengthen the resiliency of the network. Its' imperative to note that Blockchains don't replicate data amongst its entities for scalability but rather do it to increase the Blockchain Network resilience. 
+\end{itemize}
+\subsection{Implementations of Consensus Protocols}
+This section will look at dissecting the different implementations of Consensus Protocols
+\subsection{Proof of Authority}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{Images/poa.PNG}
+\caption{\label{fig:POA}An Overview of how messages are exchanged between authorities in the 2 types of POA algorithms. Adapted from \cite{cachin2017blockchain}}
+\end{figure}
+Proof of Authority \cite{lombardi2018blockchain} or POA is a new group of Byzantine Fault Tolerant (BFT) algorithms, the main characteristics of a typical POA consensus Protocol are as follows
+\begin{itemize}
+    \item Low Computational Requirement
+    \item Nodes are not required to constantly communicate amongst each other to reach a consensus
+    \item Trustable Nodes are pre-approved and verifiable through the use of the public domain which results in continuity within the network which implements the POA protocol
+\end{itemize}
+POA Protocols were designed mainly for Private Blockchains, and rely heavily on a group of N trusted nodes coined as Authority nodes or simply Authorities. Each Authority Node is identified through the use of unique Identifiers or ID, usually N/2+1 Authority Nodes are assumed to be honest. Clients issue transactions which are then received by the authority nodes who then run a consensus to order these transactions. The distribution of responsibility in a POA algorithms is achieved through the use of a mining rotation schema which ensures that the distribution of creating a block amongst authorities is done fairly. There are currently 2 implementations of POA algorithms 
+\begin{itemize}
+    \item Clique
+    \item Aura
+\end{itemize}
+Both aforementioned implementations have 2 stages that a new Block has to go through before being mined mainly 
+\begin{itemize}
+    \item Block Proposal 
+    \item Block Acceptance
+\end{itemize}
+It's imperative to note that within any implementation of a POA algorithm time is divided into step and within each step a mining leader is elected as indicated in figure \ref{fig:POA}
+\subsection{Aura}
+Aura coined as Authority round is an implementation of a POA algorithm inherent within software clients such as
+\begin{itemize}
+    \item The Parity Software Client
+    \item The Ethereum Client (Rust based)
+\end{itemize}
+Authorities within this implementation keep track of queues one for transactions and the other for Blocks. When a mining leader receives a transaction from a Client they include it in the transactions queue then proceed to add it to a new Block, the newly added Block is then broadcast to the other authorities as indicated by figure \ref{fig:POA}. If the other authorities all receive the same Block as sent by the mining leader they add it to they block queue. The mining leader is always expected to send a Block regardless of whether clients send transactions or not in the case of no transactions being sent the leader is expected to send an empty Block to the other authorities. Any disagreements amongst authorities triggers a voting to take place that determines if the current mining leader is malicious, factors that aid in determining the mining leaders intentions are as follows
+\begin{itemize}
+    \item The Mining leader has not proposed any new Blocks
+    \item The Mining leader has proposed more Blocks than the expected
+    \item The Mining leader has proposed certain Blocks to certain authorities 
+\end{itemize}
+ If a Mining leader is deemed as malicious a new mining leader is elected and the old leader is voted out
+ 
+ \subsection{Clique}
+Clique a POA algorithm mainly implemented by the Ethereum Software Client coined as Geth \cite{eip225} and written in the GO programming language, proceeds in epochs which can be identified by a prefixed sequence of committed blocks. At the start of each epoch a special transient block is broadcast which specifies the pre-selected authorities IDs, This block is then used as a snapshot of the current state of the Blockchain for any new authorities that wants to sync with the Blockchain network. A Mining leader in Clique is determined through the use of a formula which combines the current step, the block time as well as the number of authorities. Unlike in the Aura implementation of POA in addition to the Mining leader, authorities in the Clique implementation are allowed to propose new blocks within each step. Measures that ensure that authorities don't abuse they power by proposing an infinite number of blocks are implemented by introducing a cap on the number of blocks an authority can propose. Similar to the Aura implementation authorities that abuse their power can be voted out.
+
+
+\subsection{Proof of Work}
+Satoshis Nakamoto implemented a Hash-based Proof of Work or POW \cite{baliga2017understanding} Bitcoin Blockchain Network,POW requires all entities that are  part of the network show how much work they have performed. The work that these entities have to prove to have done includes finding a nonce value which when hashed together with other block parameters such as the Merkle root yield a value that is less than the target value. Once an entity finds such a value it then propagates it on to the network layer for the other entities to verify by computing the hash of a given block and checking if it satisfies the target value, a reward is awarded to this entity and is given the right to add the block to the Blockchain. In the instance where multiple entities find the nonce value at the same time, a temporary fork occurs within the network. A temporary for can be described as an instance were entities are adding blocks to separate branches within the Blockchain based on the proximity of that branch. This is resolved through a mechanism coined as the longest chain where the longest branch is the one regarded as the main Blockchain and any other branch is discarded.
+
+\subsection{Security Mechanisms in Proof of Work}
+Proof of Work \cite{gervais2016security} consensus protocols operate under the premise that no entity within the network should ever obtain more than 50\% of the network's processing power. In the instance that such an entity ever existed it would be able to control the entire network by controlling the longest chain. POW based Blockchain networks are prone to several security attacks mainly \cite{gervais2016security}
+\begin{itemize}
+    \item The Double Spending Attack
+    \item Selfish Mining
+\end{itemize} 
+
+\subsection{The Double Spending Attack}
+A double spending attack involves an entity's attempt to spend the same coin to send multiple transactions, which leads to the entity owning more coins than they posses. 
+
+\subsection{Selfish Mining}
+This involves an entity's attempts to increase their relative mining share in the Blockchain by a process of withholding blocks it has mined and gradually publishing them. The effect of selfish mining and double spending can be mitigated by ensuring continuous synchronisation of blocks .
+
+\section{Conclusion}
+This evaluation and review of studies aiming at amalgamating The Internet of Things, Blockchain Technology, Mobile Devices and Smart Locks revealed a lack of conducted research relating to the aforementioned research areas being used in conjunction. More robust research is required specifically regarding the compatibility of Blockchain technology being used in low resourced devices such as those inherent in the field of IoT. 
+
+
+\chapter{Design}
+
+\section{Introduction}
+The purpose of this is section is the design development of an experimental 3rd generation bicycle sharing platform that allows for the exploration and realization of ubiquitous computing and IoT concepts, blockchain, and wireless communication technology into practical use and gain new insights relating to the amalgamation and compatibility of these technologies within the context of a smart university campus. The architecture model (OM) which will aid in the development and categorization of artifacts of the smart university campus, this model is broken down into three layers
+\begin{itemize}
+\item The Network Layer
+\item The Interaction Layer
+\item The Application Layer
+\end{itemize}
+\section{The Architecture Model}
+This section explores the different components that make up OM and as well as its design considerations
+\subsection{Design Considerations}
+There are several key considerations to keep in mind when designing the architecture model these considerations are as follows
+\begin{itemize}
+\item Components of the OM must be plug and play this refers to the components being able to be swapped out whilst maintaining the functionality of all the other components, for instance, changing the consensus mechanism that powers the blockchain network that the bicycle-sharing platform will be used for communication
+\item The communication protocol in the network layer of the OM must be standardized 
+\end{itemize}
+\subsection{Design Overview}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\columnwidth]{figures/DSUC.jpg}
+\caption{Architecture overview of the OM}
+\label{fig:DSUC}
+\end{figure}
+Figure \ref{fig:DSUC} depicts the different layers that make up the OM and are discussed in the following sections via a bottom up approach
+\newpage
+\section{The Network Layer}
+This section provides an overview of the network design to be used by the bicycle sharing system, introducing design considerations and the network architecture
+
+\subsection{Design Considerations}
+In the introduction section it was mentioned that the main objective is to develop a smart transportation system specifically an experimental bicycle-sharing platform within the context of a smart university campus, a key consideration to keep in mind when developing the network which will be responsible for all communication within the smart university campus, are the limitations presented by IoT devices this is imperative due to the high computational requirements required for running blockchain nodes.
+\\\\
+
+
+\subsection{Architecture Overview}
+Currently deployed IoT devices widely utilize centralized network models as illustrated in figure \ref{fig:centralised}
+to communicate amongst each other and other 3rd party cloud entities. This stratified architecture has created data silos that introduce complexities such as
+\begin{itemize}
+\item Limited user control and Lack of solicitation regarding user data
+\item Lack of focus on the life cycle of the data IoT devices store 
+\item Lack of locality of IoT devices
+\item Lack of a standardized data sharing protocol which forces the need for IoT device manufacturers to beforehand agree on a standardized communication protocol for these devices to enable the sharing of data amongst each other
+\end{itemize}
+As a potential solution the study advocates for the deployment of a blockchain-based decentralized network architecture powered by a proof of authority consensus mechanism.
+\begin{figure}[ht]
+\centering
+\includegraphics{figures/centralised.PNG}
+\caption{Architecture overview of a Centralised Network Model}
+\label{fig:centralised}
+\end{figure}
+\subsection{The Blockchain Network}
+In the introduction section, it was stated that a decentralized network model will be deployed as illustrated in figure \ref{fig:network}, the blockchain network as well as the consensus mechanism it runs on is explained in the enclosing sub-section.
+
+\subsection{The Blockchain Network and Consensus Mechanism}
+Figure \ref{fig:network} illustrates the structure of the proposed Proof of Authority Blockchain Network, there are 4 types of nodes that make up the network mainly
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\columnwidth]{figures/RhodeITConsortium.jpg}
+\caption{Architecture overview of a decentralised proof of authority blockchain network}
+\label{fig:network}
+\end{figure}
+
+\begin{itemize}
+\item Boot Node \\
+This is a program which comes embedded in the Geth client which will be explained in a later section, the purpose of this node is to route newly connecting nodes to already existing nodes, it acts as a node discovery service.
+\item Sealer Node \\
+Also referred to as miner nodes, whose responsibility is to receive transactions from client nodes then run a consensus to order these transactions. These nodes are pre-approved and verifiable which results in continuity in the decentralized blockchain-based network and have high computational resources. The Blockchain Network will be running a sealer node with the specifications illustrated in figure \ref{fig:spec} and \ref{fig:spec1}. For the purpose of this study sealer nodes identities are known by the system administrator and do not need to be verified via any public domain
+\begin{figure}[!tbp]
+\centering
+\begin{minipage}[b]{0.45\textwidth}
+\includegraphics[width=\textwidth]{figures/1.PNG}
+\caption{CPU Specifications}
+\label{fig:spec}
+\end{minipage}
+\hfill
+\begin{minipage}[b]{0.45\textwidth}
+\includegraphics[width=\textwidth]{figures/2.PNG}
+\caption{RAM Specifications}
+\label{fig:spec1}
+\end{minipage}
+\end{figure}
+\newpage
+\item Client Node \\
+These nodes are responsible for receiving transactions from users of the network and propagate these transactions to the sealer nodes. These Nodes within the context of the smart transportation system will serve as
+\begin{itemize}
+\item Bicycle docking stations that allow users to
+\begin{enumerate}
+\item Connect and view bicycles docked at that docking station
+\item Rent out a bicycle at that docking station 
+\item Dock a bicycle at that particular docking station
+\end{enumerate}
+\item Allow all smart entities such as IoT devices in the context of the smart university campus to access and store data with the network
+\item Sync the data they store with all client nodes connected to the network this removes the reliance on a central authority in the instance where there's a power cut for instance in one part of the university campus the node will still be able to restore its data once it recovers due to the decentralized nodes constantly syncing data amongst each other
+\end{itemize} 
+A Raspberry PI 3B as illustrated in figure \ref{fig:rpb} is used to as a client node, a collection of raspberry PI's will be distributed throughout the university campus and will be monitored through an application which will be discussed in a later section.
+\begin{figure}[ht]
+
+\centering
+\includegraphics{figures/rp.jpg}
+\caption{Raspberry PI Model 3B}
+\label{fig:rpb}
+\end{figure}
+\item Archive Node \\
+The purpose of this node is to store all data generated by the blockchain network as well as data related to the state of the blockchain network at any given point in time, they are used by block explorers to allow users to search through block data. 
+\end{itemize}
+\newpage
+\subsection{Network Setup, Configuration and Deployment}
+To aid in the deployment of the blockchain network development tools provided by Ethereum specifically the Go Ethereum client also known as Geth will be used, it is freely available on their website \\\ \url{https://geth.ethereum.org/downloads/} installation instructions are also provided on the website.
+
+\subsection{Genesis JSON File Creation}\label{genesisFileCreation}
+Before deploying any sealer or client nodes after installing the Geth client, the Pupeth program which comes embedded with geth will be used create a Genesis file which contains flags required by the Geth client to initialise the blockchain network used.
+
+\subsection{Installation Instructions}
+To start puppeth navigate to the directory where geth is installed via the command line interface (cmd) and launch it using the following command \textit{puppeth.exe} on a windows machine the following screen as indicated by figure \ref{fig:puppeth1}
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/puppeth1.PNG}
+\caption{A screenshot showing the puppeth program welcome screen}
+\label{fig:puppeth1}
+\end{figure}
+Puppeth will then prompt for a network name the blockchain network deployed by the OM will take the name \textit{rhodeit} as illustrated in figure \ref{fig:puppeth2}.
+\newpage
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/puppeth2.PNG}
+\caption{A screenshot showing the results of typing the name of the network}
+\label{fig:puppeth2}
+\end{figure}
+
+The next step would be to configure a new genesis file this is done by selecting option two from the menu as illustrated in figure \ref{fig:puppeth3}. 
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/puppeth3.PNG}
+\caption{A screenshot showing the results of typing the name of the network}
+\label{fig:puppeth3}
+\end{figure}
+\newpage
+The Genesis JSON file created using the puppeth program takes the structure illustrated by the code snippet below
+\newpage
+\begin{minted}{JSON} 
+{
+  "config": {
+    "chainId": 1234,
+    "homesteadBlock": 1,
+    "eip150Block": 2,
+    "eip150Hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "eip155Block": 3,
+    "eip158Block": 3,
+    "byzantiumBlock": 4,
+    "constantinopleBlock": 5,
+    "clique": {
+      "period": 1,
+      "epoch": 30000
+    }
+  },
+  "nonce": "0x0",
+  "timestamp": "0x5cdd07da",
+  "extraData": "0xae3478f55ae21b9139652467d0b73177d6bec204b8c8316d7a3b401a835461c0aaf926c0caf5ef89",
+  "gasLimit": "0x7A1200",
+  "difficulty": "0x1",
+  "coinbase": "0x0000000000000000000000000000000000000000",
+  "alloc": {
+    "ae3478f55ae21b9139652467d0b73177d6bec204": {
+      "balance": "0x995BE96E64066972999999"
+    },
+    "b8c8316d7a3b401a835461c0aaf926c0caf5ef89": {
+      "balance": "0x995BE96E64066972999999"
+    }
+  },
+  "number": "0x0",
+  "gasUsed": "0x0",
+  "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000"
+}
+\end{minted}
+Each property of in the genesis file represents the required parameters by the geth client in order to initialize the blockchain network, only the important properties will be explained below
+\begin{enumerate}
+\item config
+\begin{enumerate}
+\item chainId \\
+This represents the network identification, it used by all nodes who wish to connect either as a sealear node or a client node.\\\ It also protects the network from any attacks such as a replay attack by preventing attackers from deciphering continuous values in the network
+\item homeStead \\
+This represents the different releases of the Ethereum Network mainly homestead and frontier, by setting the value to 0 the network will use the frontier release and 1 sets the network to use the homestead release of ethereum which also happens to be the latest released version.
+\end{enumerate}
+\item clique \\
+This represents the consensus mechanism to be used by the Geth client the term clique represents the proof of authority consensus mechanism
+\begin{enumerate}
+\item period \\
+This is the interval in seconds with which a new transaction or block takes to get mined in the OM a period of 1 second is used
+\item epoch \\
+This is the minimum number of blocks after which the network can checkpoint and reset any pending votes made by nodes
+\end{enumerate}
+\item nonce \\
+This represents the signer proposal regarding the account defined in the beneficiary field. A nonce value of \textit{0xffffffffffffffff} represents that a new signer has been proposed whilst a nonce value of \textit{0x0000000000000000} represents the account defined in the beneficiary field is to be voted out as a signer for in the above code snippet the nonce value has been set to \textit{0x0} due to the signers or sealer nodes being defined in the \textit{extraData} property
+\item extraData \\
+This field is used for proposing any new signers or sealer nodes; it's also referred to as the beneficiary field which was mentioned earlier on.
+\item gasLimit
+This is maximum amount of gas the network will allow per transaction, in the OM a limit of \textit{0x7A1200} which translates to 8 million gas is set, this could be increased or decreased depending on the requirements of the bicycle sharing platform. 
+\item difficulty \\
+This contains the score of a block in order to derive the quality of the chain, the OM, the initial difficulty is set to 1 but this value attenuates as the network progresses.
+\item alloc \\
+This property represents the total amount of ether that will be exchanged in the network that is the initial balance to be allocated to the specified accounts.
+The OM sealer nodes allocated balances are indicated by table \ref{tab:signer_balance}, this is the total amount of credit available on the network. These balances will be used to credit users of the bicycle sharing platform when they purchase ride credits which allow them to rent out a bicycle.
+\\
+\begin{table}[!htb]
+\centering
+\begin{tabular}{ |p{8cm}|p{7cm}| }
+\hline
+Signer Address & Eth Balance (Hex) \\
+\hline
+ae3478f55ae21b9139652467d0b73177d6bec204 & 0x995BE96E64066972999999 \\
+b8c8316d7a3b401a835461c0aaf926c0caf5ef89 & 0x995BE96E64066972999999 \\
+\hline
+\end{tabular}
+\caption{A table showing the balances allocated to the signers nodes also known as sealer nodes}
+\label{tab:signer_balance}
+\end{table}
+\item number \\
+Represents the initial block number to be used when initialising the blockchain network
+the blockchain network in the OM initial block number is set to \textit{0x0} which translates to 0 in decimal format.
+\end{enumerate}
+
+\subsection{Deploying a Boot Node} \label{bootNodeDeploy}
+To deploy a boot node requires the creation of a script which will contain flags required by the geth client in order to initialize the node discovery service. Figure \ref{fig:network1} illustrates the overview architecture of a node initial connection to the network, each joining node is required to query the boot node for existing nodes in the network. Once the connecting node has the IP addresses of these nodes, it will sync with the already existing nodes by requesting a copy of the blockchain network data, after which the services of the boot node will not be required by the joining node.
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/Network1.PNG}
+\caption{A screenshot architecture of initial connection to a bootnode}
+\label{fig:network1}
+\end{figure}
+\newpage
+\subsection{The Boot Node Script}
+Before the boot node is initialised a \textit{boot node key} is required, the boot node key is used as identification (ID) for the boot node on the network, as well as by all newly connecting nodes on the OM blockchain network. The geth client comes embedded with a bootnode program which allows for the generation of such a key as illustrated in figure \ref{fig:enode}.
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/enode.PNG}
+\caption{A screenshot illustrating the creation of the OM bootnode key}
+\label{fig:enode}
+\end{figure}
+
+To create a boot node key the keywords illustrated in the code snippet below are used
+\begin{minted}{JSON}
+bootnode -genkey DSUCRHODES
+\end{minted}
+With the \textbf{-genkey} keyword specifying for the creation of a bootnode key and the text after \textbf{DSUCRHODES} specifying the name of the file to store the generated key in, the OM generated bootnode key is as follows
+\newline
+\begin{minted}{JSON}
+f27d6c3932e2067d6995f2b334dcf7bcc0f89e81d494e2eed33775dc57e798fc
+\end{minted}
+Once a bootnode key is generated, the script which contains the necessary flags required by geth to start the bootnode needs to be created as illustrated by the script code snippet below
+
+
+\begin{minted}{JSON}
+bootnode -nodekey "./boot.key" -verbosity 9 -addr :9999 
+\end{minted}
+
+The created scripts take the format of a batch \textbf{(.bat)} file which is used to execute batch commands in windows systems, the bootnode script can then be executed as illustrated in figure bootnode
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/bootNode.PNG}
+\caption{A screenshot illustrating the results of executing the bootnode script}
+\label{fig:bootnode}
+\end{figure}
+\subsection{Deploying a Sealer Node} \label{sealerNodeDeploy}
+A sealer nodes are imperative entities within OM blockchain network, without these nodes the blockchain network will not function which necessitates for cautious deployment of these nodes. Just like with bootnodes, the OM sealer nodes will also be utilising scripts which will aid in their deployment. This script will take the structure as indicated in the code snippet below \newpage
+\begin{minted}{bash}
+geth --datadir ./"BlockchainData" --syncmode full --ws --shh --wsaddr "0.0.0.0"
+--wsapi admin,shh,personal,db,eth,net,web3,txpool,miner,clique --wsport 12000
+--wsorigins "*" --port 10000 --bootnodes enode://6ce75a04deae05ed8bb3dd62f929afd
+a96eaa175a3f6c6f915d48b23f30649a1a93d69a5b24f992251a55fb5417dfbceed9137ece18b294
+00b0adb47405577a3@127.0.0.1:9999 --networkid 1234 --gasprice 200
+--ipcdisable --allow-insecure-unlock --keystore ./"BlockchainData/keystore" 
+\end{minted}
+Each flag is specified by a \textbf{--} followed by an optional value. 
+\begin{itemize}
+\item geth\\
+This is to indicate the the script to initialise the geth client and to initialise based on the flags that follow after.
+\item datadir\\
+This flag is used to specify the data location of all blockchain data that will be produced by the network, the OM blockchain data location is in a folder named \textbf{BlockchainData} which is located in the same directory as the sealer node script
+\item syncmode\\
+This indicates to the geth client the amount of data that should be synced with a node, all OM sealer nodes and some client nodes will pass the \textbf{full} flag to ensure that they have the entire state of the blockchain network synced.
+Client nodes who are not initialised with the \textbf{full} flag will be initialised with the \textbf{light} mode which means they only sync the header chains and request everything else as the network progresses.
+\item ws \\
+This enables web socket connections to the OM blockchain network.
+\item wsport \\
+This specifies the port number which will be used to serve requests, the OM uses port 12000
+\item wsaddr \\
+This flag specifies the address which will be used to listen to incoming web socket connections, the OM Blockchain network listens for websocket connections on all open address.
+\item wsapi \\
+These are API's which will be used by all client when communicating with the blockchain network, the OM has enabled are indicated after the \textbf{admin, shh,personal,db,eth,net,web3,txpool,miner,clique}
+\item bootnodes \\
+This specifies the bootnode address at which to connect to in order for the node to discover nodes on the network, in section \ref{bootNodeDeploy} a bootnode key was generated this key will be used as identification together with the IP address of the computer which the bootnode script is running on and Port number as indicated by.
+\begin{minted}{bash}
+enode://6ce75a04deae05ed8bb3dd62f929afd
+a96eaa175a3f6c6f915d48b23f30649a1a93d69a5b24f992251a55fb5417dfbceed9137ece
+18b29400b0adb47405577a3@127.0.0.1:9999 
+\end{minted}
+
+\item networkid\\
+This is used to identify the network; the OM blockchain network id is set as \textbf{1234}
+\item gasPrice \\
+The default network gas price, this is set to 200 Gwei in the OM blockchain network 
+\item keystore\\
+This flag is used to specify the data location to all the account's private keystore which will be used by the OM blockchain network.
+\end{itemize}
+The results of executing the sealer node script are illustrated in figure \ref{fig:sealernodeScript}
+
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/sealer.PNG}
+\caption{A screenshot illustrating the results of executing the sealer node script}
+\label{fig:sealernodeScript}
+\end{figure}
+
+\subsection{Deploying a Client Node}
+The RASPBIAN OS will be used as the primary operating system to run on each raspberry Pi3B client node. The RASPBIAN OS is available for download on the following URL \url{https://www.raspberrypi.org/downloads/}, all installation instructions are also available in the URL \url{http://raspnode.com/diyEthereumGeth.html#installethereum}. Once the RASPBIAN OS has been installed, the next step is to install the Geth client compiled to work on arm processes installation instructions are available on the URL \url{http://raspnode.com/diyEthereumGeth.html#installethereum}
+
+\subsection{Setting Up and Launching a Client Node}\label{cnodeDeployment}
+To aid in the setup and deployment of a client node the same \textbf{Genesis file} used to deploy the other nodes will be used, the following steps are to be taken to initialise the files and folder necessary to allow the client node to function and sync with the rest of the network. A shell script will be used with the following code to initialise the folder which will store synced blockchain data.
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=Shell code illustrating the flags required to launch a client node]
+geth --datadir ./"BlockchainData" --syncmode fast --ws --shh --wsaddr "0.0.0.0" --wsapi admin,shh,personal,db,eth,net,web3,txpool,miner,clique --wsport 13000 --wsorigins "*" --port 10004 --rpc --rpcaddr 0.0.0.0 --rpccorsdomain "*" --rpcport 11004 --rpcapi admin,shh,personal,db,eth,net,web3,txpool,miner,clique --bootnodes enode://6ce75a04deae05ed8bb3dd62f929afda96eaa175a3f6c6f915d48b23f30649a1a93d69a
+5b24f992251a55fb5417dfbceed9137ece18b29400b0adb47405577a3@146.231.123.137:9999 --networkid 1234 --gasprice 200 --ipcdisable --keystore ./"BlockchainData/keystore"
+\end{lstlisting}
+Client Nodes don't keep replay the full state of the network, they instead download all block data with transaction receipts. This is beneficial for low resourced devices such as the Raspberry Pi's used as nodes which are docking stations in the bicycle sharing platform. Executing the above shell script on the terminal as illustrated in figure \ref{fig:clientNodeScript}
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/unlock.png}
+\caption{A screenshot illustrating the results of executing the bash script to initialise a client nodes folders and files}
+\label{fig:clientNodeScript}
+\end{figure}
+\newpage
+All accounts used by the Blockchain network can be unlocked using the below shell script
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=Shell code the JavaScript code unlocking all accounts on the network]
+geth attach ws://localhost:13000 --exec eth.accounts.map(function(e){personal.unlockAccount(e,'hello',0)}); 
+\end{lstlisting}
+Each client node is required to have these accounts unlocked in order for users who have been assigned these accounts to send transactions to the network.
+
+
+\subsection{Deploying an Archive Node}
+Similar to the client node deployment explained in section \ref{cnodeDeployment} an archive node will also require a \textbf{Genesis file}, the following bash script can be executed from a windows terminal which will initialise and start the replaying of all transactions and blocks from the genesis block of the blockchain network
+\begin{enumerate}
+\item Initialising the folders and files \\
+Initialising the folder which will store all replayed blockchain data can be created by running the following bash script which contains bash code
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=Bash code illustrating the flags required to initialise an archive node]
+geth --datadir ./"BlockchainData" init ./rhodeit.json 
+\end{lstlisting}
+\item Launching the Archive Node\\
+Initializing the syncing of all historical block and transaction data can started by running the bash script with code below
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=Bash code illustrating the flags required to initialise an archive node]
+geth --syncmode full --gcmode archive --datadir ./"BlockchainData" --wsaddr "0.0.0.0" --ws --wsaddr "0.0.0.0" --wsport 13000 --wsorigins "*" --bootnodes enode://6ce75a04deae05ed8bb3dd62f929afda96eaa175a3f6c6f915d48b23f30649a1a93d69a
+5b24f992251a55fb5417dfbceed9137ece18b29400b0adb47405577a3@127.0.0.1:9999 --networkid 1234 
+\end{lstlisting}
+The keyword \textbf{--gcmode archive} indicates to the geth client to replay all transactions that have occurred since the genesis block. The blockchain explorer will connect to the archive node using the port number \textbf{13000}, to display historical or real time data to users of the bicycle sharing system.
+\end{enumerate}
+
+
+\subsection{Proposing a new Sealer Node}
+The process of adding a new sealer node is done through the Geth JavaScript console via the Clique API, the steps necessary to propose a new sealer is as follows these steps are executed on a windows operating system but will not differ for other operation systems.
+\begin{enumerate}
+\item Open a new command prompt interface
+\item The geth JavaScript console is activated using the command \newline
+\textbf{geth attach ws://localhost:12000} 
+\item To propose a new signer we use the following command \textbf{clique.propose(node etherbaseaddress} the OM blockchain network has deployed 2 sealer nodes one which was defined in the genesis file as described in section \ref{genesisFileCreation} and one proposed in this step using the command \\\ \textbf{
+clique.propose("0xb8c8316d7a3b401a835461c0aaf926c0caf5ef89")} figure \ref{fig:proposeSealer1} illustrates the results of executing this step
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/singerProposal1.PNG}
+\caption{A screenshot illustrating the execution of the propose method}
+\label{fig:proposeSealer1}
+\end{figure}
+\newpage
+\item The time taken for the voting process varies in this instance it took close to 5 minutes for the new sealer address to show up when querying the network for the list of sealer address using the command \\\ \textbf{clique.getSigners("0xb8c8316d7a3b401a835461c0aaf926c0caf5ef89")} on the JavaScript geth console as illustrated in figure \ref{fig:proposeSealer2}.
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/singerProposal.PNG}
+\caption{A screenshot illustrating the results of querying current sealer nodes Eth addresses}
+\label{fig:proposeSealer2}
+\end{figure}
+\end{enumerate}
+\newpage
+
+\subsection{Initiating the Mining Process for a Sealer Node}
+In order for the OM Blockchain network to start ordering transaction sent by client nodes mining has to be initiated this can be done in two ways
+\begin{enumerate}
+\item --mine \\
+The mine flag can be enabled in the script used to initialise a sealer but for some reasons with the current version of the geth client this refuses to work as expected
+\item bash script \\
+This options requires the usage of the Geth JavaScript console, JavaScript code that call the \textbf{miner} API is injected thus starting the mining process the injected code is illustrated in the code snippet below.
+\begin{minted}{bash}
+geth attach http://localhost:11000 --exec miner.start(2)
+\end{minted}
+The \textbf{--exec} flag is used to indicate to the geth client that code should be executed in the JavaScript console, each sealer node in the OM blockchain network is allocated 2 threads for mining as indicated by \textbf{miner.start(2)}. The results of starting the mining process is indicated by figure \ref{fig:mining}
+\newpage
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/mining.PNG}
+\caption{A screenshot illustrating the results of starting the mining process}
+\label{fig:mining}
+\end{figure}
+\end{enumerate}
+\section{The Interaction Layer}
+The interaction layer consists of two parts, the Application Programming Interface (API) and Extension.
+
+\subsection{The Application Programming Interface (API)} \label{APILayer}
+This layer nested within the interaction layer is responsible for enabling communication between the application layer and or with the Extensions sub layer with the OM blockchain network, communication can be applications requesting the number of blocks that have passed in OM blockchain newtwork, querying certain information from decentralised applications (DApps) that run on the OM blockchain network such such as the bicycle sharing platform mobile application discussed in a later section.
+API's that are used for this study to enable the communication between the blockchain and dapps are
+\newpage
+\begin{enumerate}
+\item EmbarkJS API \\
+EmbarkJS is a server less JavaScript framework that is used for developing robust decentralised applications (DApps). It currently integrates with any EVM blockchains such as Ethereum and any Ethereum based blockchain networks such as the OM blockchain network, It also supports decentralised storages (IPFS), decentralised communication (WHISPER and Orbit). EmbarkJS offers the following development features.
+\begin{itemize}
+\item Automatically deploy smart-contracts to any blockchain network
+\item Develop smart-contracts in a Test Driven manner using javascript
+\item Keep track of deployed smart-contracts as you make changes to them
+\item Manage complex systems of interdependent smart-contracts
+\end{itemize}
+\item Nethereum API \\
+Nethereum is a .Net based framework that enables the interaction between smart-contracts and any.Net based programming language
+\item Web3 API \\
+Web3 enables the development of clients that can interact with any ethereum based Blockchain network, it consists of api calls that for instance allow DApp users to send of Ether or any blockchain transaction, it also enables for the interaction with smart-contracts. These API calls are enabled through JSON RPC calls.
+\end{enumerate}
+\subsection{The Extensions Sub-Layer} \label{extensions}
+This extensions sub layer is mainly used when interacting with the blockchain via a web browser, the interaction between the dapp and the blockchain is enabled through the use of a browser extension coined Metamask. Metamask is a browser extension which enables users of DApps to interact with any ethereum based blockchain network. Figure \ref{fig:web3} illustrates how metamask enables communication between any ethereum based blockchain network such as the OM blockchain network and dapps. The use of an extension is not always necessary as some dapps make use of apis which allow them to interact with the blockchain without the use of an extension.
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/Web3.jpg}
+\caption{A screenshot illustrating communication between a DApp, Web3 and any Ethereum based Blockchain Network }
+\label{fig:web3}
+\end{figure}
+The Web3 API will communicate with the geth client as shown in figure \ref{fig:web3}, the geth client will then query the chain data that's persisted amongst all nodes on the OM blockchain network.
+\newpage
+\section{The Application Layer}
+This layer is broken down into three sub-layers, mainly. 
+\begin{enumerate}
+\item The Blockchain Explorer
+\item IoT devices
+\item The Applications 
+\end{enumerate} 
+These sub-layers are explained in the following sub-sections
+
+\subsection{The Blockchain Explorer} \label{dcons}
+The blockchain Explorer is an application for users of dapps within the smart university campus for the bicycle sharing platform to view data such as.
+\begin{itemize}
+\item Transaction data
+\item Account addresses
+\item Account balances
+\item Real-time block data
+\item Block length
+\item Transaction status
+\end{itemize}
+In essence a blockchain explorer is a search engine in the form of a web application specifically designed to search information related to a blockchain network. 
+
+\subsection{Design Considerations}
+There are several key design considerations to consider when designing a blockchain explorer.
+\begin{itemize}
+\item Front-End Framework \\
+The front end framework to be used must have a gentle learning curve
+\item Reactive mechanisms \\
+The front-end framework chosen for the development of the UI for the blockchain explorer must have mechanisms that keep the states of the user interface (UI) in full synchronisation with the DOM and the View. This is an imperative requirement due to the constant changing of block data in the blockchain network.
+\end{itemize}
+
+\subsection{Architecture Overview}
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/BlockExplorer.jpg}
+\caption{Architecture overview of blockchain explorer}
+\label{fig:blockexplorer}
+\end{figure}
+The blockchain explorer will utilize the Web3 API which was explained in section \ref{APILayer}, figure \ref{fig:blockexplorer} illustrates the architecture overview of the blockchain explorer in design. The DApp will be written in Vue a JavaScript front-end framework which has all the design considerations as described in section \ref{dcons}, the usage of Vue requires that the back-end be written in JavaScript as this is the same programming language used by the front-end framework however typescript is also an option. 
+
+\subsection{Implementation}
+The blockchain explorer will comprise of 3 main view components mainly.
+\begin{itemize}
+\item The Block View\\
+Which is used to display realtime mining of blocks by sealer nodes.
+\item Transaction View \\
+Used to display realtime mining of transactions
+\item Search View \\
+Used to verify any transaction hash, look up any block data information
+\end{itemize}
+\subsection{The Block-View Component}
+As mentioned previously the blockview component will be used to display real time mining of blocks. The web3 api calls that enable the querying of block data is illustrated by the code snippet below.
+\begin{lstlisting}[language=JavaScript, caption=Code illustrating how block information is fetched from the blockchain OM network] 
+loadBlocks: async function ($state) {
+this.isBusy = true;
+let This = this
+this.nodeAddress= "http://146.231.123.137:11003";
+this.Web3 = new Web3(new Web3.providers.HttpProvider(this.nodeAddress));
+this.Web3.eth.getBlock('latest').then(function (block) {
+for (var i = block.number, count = 0; count < This.limit; i--, count++) {
+This.Web3.eth.getBlock(i).then(function (blockInner) {
+$state.loaded()
+if (blockInner) {
+block.timestamp = block.timestamp * 1000
+blockInner.stringTime = ''
+This.Blocks.push(blockInner)
+}
+})
+}
+This.Blocks = sort(This.Blocks).desc(transaction => transaction.timestamp);
+$state.complete()
+})
+}
+\end{lstlisting}
+On line 4 the client node address is assigned, in this instance the node address is \textbf{146.231.123.137} a port needs to also be specified the port which the specific client node listens to is port \textbf{11003}. Due to the heavy computational requirements of iterating through all blocks on a blockchain network the code starting from line 6 till 16 only displays the last 100 blocks mined by the OM blockchain network, this code is called very second. The first loop on line 7 fetches the 100 latest blocks one at a time the second inner loop then gets the information related to the block at hand and pushes this block data into the block view component for rendering as indicated by line 13. Line 17 then sorts the blocks according to the time lapsed since it was mined based on the its timestamp, the results of executing the code snippet is illustrated in figure \ref{fig:blockexplorer}.
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/chainExplorer1.PNG}
+\caption{Screenshot illustrating the real time mining of blocks}
+\label{fig:blockexplorer1}
+\end{figure}
+Information related to a block can be viewed by clicking on the \textbf{miner} link highlighted in blue, clicking on this will trigger a popup view as illustrated in figure \ref{fig:blockexplorer2}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/chainExplorer2.PNG}
+\caption{Screenshot illustrating information related to a block}
+\label{fig:blockexplorer2}
+\end{figure}
+
+
+\subsection{The Transaction-View Component}
+Just like the block component the transaction component will be limited to only showing the last 100 transactions mined by the sealer nodes. The code snippet below illustrates the code used to fetch the transactions.
+
+\begin{lstlisting}[language=JavaScript, caption=Code illustrating how transaction information is fetched from the blockchain OM network] 
+loadTransactions: async function ($state) {
+let This = this
+setInterval(function () {
+This.checkTransactionCount()
+if (This.transactionHashes.length > 0) {
+This.transactionHashes.map((hash) => {
+This.Web3.eth.getTransaction(hash).then((transaction) => {
+This.Web3.eth.getTransactionReceipt(transaction.hash).then((receipt) => {
+smart-contract("Exists: ", This.Transactions.some(tx => tx.hash === hash))
+This.Web3.eth.getBlock(receipt.blockNumber).then((block) => {
+if (This.Transactions.some(tx => tx.hash === hash)) {
+return
+}
+transaction.timestamp = block.timestamp
+transaction.stringTime = This.countUpFromTime(transaction.timestamp)
+transaction.contractAddress = receipt.contractAddress
+transaction.status = receipt.status
+transaction.cumulativeGasUsed = receipt.cumulativeGasUsed
+transaction.logs = receipt.logs
+transaction.input = This.Web3.utils.hexToAscii(transaction.input)
+This.Transactions.push(transaction)
+console.log(transaction)
+$state.complete()
+if (This.Transactions.length == This.limit) {
+for (var i = 0; i < This.limit / 2; i++) {
+This.Transactions.pop()
+}
+}
+})
+})
+})
+})
+}
+// });
+}, 1000)
+}
+\end{lstlisting}
+
+Transaction information is fetched every second as indicated by line 3 \textbf{set Interval}. Every time a transaction occurs its added into the \textbf{transactionHashes} list, this list is then iterated, information related to which block mined the transaction is queried using the \textbf{Web3.eth.getTransactionReceipt} API call which returns transaction information as indicated from line 14 to line 20. Figure \ref{fig:transactions} illustrates how the transactions view component displays transactions as they are submitted by client nodes, clicking on the transaction hash colored in blue displays a popup modal which shows specific information about the transaction as illustrated in figure \ref{fig:transaction1}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/Transactions.PNG}
+\caption{Screenshot illustrating transactions submitted by client nodes}
+\label{fig:transactions}
+\end{figure}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/Transactions2.PNG}
+\caption{Screenshot illustrating transaction information relating to a transaction hash}
+\label{fig:transaction1}
+\end{figure}
+\newpage
+\subsection{The Search-View Component}
+This component enables users of the bicycle sharing platform to query any information related to any transaction or query data related to a specific block. An example of how a user may query a transaction hash such as \textbf{0x7dc86b81fa1ab455f756117330721acec6eb5b3e0dce9cc72b9aa1bd01949764} is illustrated in figure \ref{fig:thash}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/thash.PNG}
+\caption{Screenshot illustrating a transaction hash being queried against the OM blockchain network}
+\label{fig:thash}
+\end{figure}
+
+\newpage 
+\section{The 3rd Generation Bicycle Sharing Platform} 
+Section \ref{problem statement section to add} identifies the problems as to why a bicycle sharing platform would be necessary within the context of smart university such as Rhodes University the following sub-sections focus on the architecture, design and implementation of the 3rd generation bicycle sharing platform within the context of a smart university campus such as Rhodes University.
+
+
+\newpage
+\subsection{Design Considerations} \label{designConsideration}
+The proposed 3rd generation bicycle-sharing platform will compromise of two components.
+\begin{itemize}
+\item Cross Platform Mobile Application
+\item A Management System 
+\end{itemize}
+For the purpose of this study, a Raspberry PI3B will be used to represent a bicycle, for docking stations, a collection of Raspberry PI3Bs will be used to represent the multiple docking stations around the the university campus. The bicycle sharing platform will be accessible via a cross platform mobile application written in the CSharp programming language, the management system must is written VueJS a JavaScript front-end framework. Due to limitations related to the dynamic paring of Bluetooth devices via code the process of locking and unlocking a bicycle will be simulated by turning on lights, these lights will be controlled via a NodeJS server which communicates with a Raspberry PI3B General Purpose Input Output pins also coined as GPIO. The study will be focusing on the android version of the application however the same processes and steps apply when using the ios version of the bicycle sharing platform mobile application. Interaction with the blockchain will be facilitated by a smart-contract written in the solidity programming language, this smart-contract will be responsible for storing all information related to.
+\begin{itemize}
+\item Users
+\item Bicycles
+\item User credit
+\item Docking Stations
+\end{itemize}
+
+\subsection{System Architecture and Design Overview}
+The purpose of this section is to introduce an overview design of the system; the system architecture is a way of providing the overall view of the proposed system by placing it into context with systems outside of its boundary. Figure \ref{fig:hierarchy} illustrates the processes that are executed when interacting with the components of the bicycle sharing platform. 
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/BicyclePlatformHierachyDiagram.jpg}
+\caption{An overview of the processes in the bicycle sharing platform }
+\label{fig:hierarchy}
+\end{figure}
+\newpage
+
+
+\subsection{Data Models}
+The bicycle sharing platform has 3 artifacts mainly.
+\begin{itemize}
+\item Simulated Rhodes University Student/Staff PostgreSQL database
+\item Users 
+\item Administrator
+\item Bicycle
+\end{itemize}
+
+\subsection{Simulated Rhodes University Student/Staff PostgreSQL database}
+The verification of a user will be done by checking if a user exists in the student/staff postgressql database, configuration and setup of this database is explained in the following sub sections.
+\subsection{Downloading ProgreSQL}\label{downloadPGS}
+PostgreSQL is a powerful, open source object-relational database system with over 30 years of active development that has earned it a strong reputation for reliability, feature robustness, and performance. PostgreSQL is available for download on the URL \url{https://www.postgresql.org/download/}
+
+\subsection{Configuration and Installation}
+In order to create the student/staff SQL database a server which will host the database needs to be created, the creating the server can be done by launching the \textbf{pgAdmin 4} application installed by following the installation instruction outlined in the URL provided in section \ref{downloadPGS}. once the application is launched \ref{fig:PgAdmin}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/PostGresSQL.PNG}
+\caption{A screenshot illustrating the results of launching the PgAdmin 4 application }
+\label{fig:PgAdmin}
+\end{figure}
+\newpage
+
+A new browser tab will open and load the application UI on port \textbf{50013} as illustrated by the UI in figure \ref{fig:PgAdmin}. The server used to host the simulate the Rhodes University student/staff database is created in the following steps
+\begin{enumerate}
+\item Creating the host server\\
+This step involves the process of creating the server which will serve all incoming requests made by the bicycle sharing mobile application, right clicking on the \textbf{servers} option and selecting \textbf{create} and server option as illustrated by figure \ref{PgAdminServerOption}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/createServer.png}
+\caption{A screenshot illustrating selection of the create server option}
+\label{fig:PgAdminServerOption}
+\end{figure}
+\newpage
+
+\item Configuring the Server \\
+The server name and password can be configured in the UI illustrated in figure \ref{fig:PgAdminServerOption1} and \ref{fig:PgAdminServerOption2}. The name of the server that the simulated Rhodes university database will be hosted on is coined as \textbf{rhodesserver}
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/createServer1.png}
+\caption{A screenshot illustrating the creation of the rhodes server}
+\label{fig:PgAdminServerOption1}
+\end{figure}
+\newpage
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/createServer2.png}
+\caption{A screenshot illustrating the creation of the rhodes server login credentials}
+\label{fig:PgAdminServerOption2}
+\end{figure}
+\newpage
+The results of creating the \textbf{rhodes server} will create all the server artifacts as illustrated by the expanded UI in figure \ref{fig:PgAdminServerOption3}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/afterServer.PNG}
+\caption{A screenshot illustrating the artifacts created to aid in the running of the server}
+\label{fig:PgAdminServerOption3}
+\end{figure}
+\newpage
+\item Configuration of the Rhodes Student Staff Database \\
+To setup the database which will hold student/staff details a SQL table needs to be created, this table is created using the following SQL table
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=Code illustrating the creation of the student staff database] 
+CREATE TABLE IF NOT EXISTS student_staff (
+credits INT NOT NULL,
+password VARCHAR(32) NOT NULL,
+student_staff_id VARCHAR(8) PRIMARY KEY NOT NULL,
+eth_address character(42) NOT NULL,
+lastlogin timestamp without time zone DEFAULT now()
+);
+\end{lstlisting}
+Each property defined in the create statement is explained below
+\begin{enumerate}
+\item credits \\
+This property represents the amount to be charged to the student/staff account.
+\item password \\
+This is the password allocated to the student/staff member by the university.
+\item student-staff-id \\
+This represents the student number staff id allocated to a user by the university.
+\item eth-address \\
+This represents the Ethereum address that the each student/staff member is allocated this address will be used to access the bicycle sharing mobile application.
+\item lastlogin \\
+This represents the last time the user attempted to login.
+\end{enumerate}
+\item Populating the Rhodes Database \\
+The following code snippet is used to create student and staff members of the university \newpage
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=Code illustrating the creation of the student staff database] 
+INSERT INTO student_staff (credits,password,student_staff_id,eth_address) VALUES
+(0,'Spha','g14m1190','0x68362a5502f758ca2bf75c22f2e93737e78eeaee'),
+(0,'Password','g25n4895','0xa47ae79a036c5461591dea825cb8b8761cbbba2d'),
+(0,'Password','g25d9880','0x5879393414b0df83dfaf16c63c0e03f14ea20e77'),
+(0,'Password','g29d6356','0xcba87494a176f5c6142b52197d5af2c69bf8cbda'),
+(0,'Password','g47y7051','0x39dd2a984fbbf9aaebf83003e4318e177fd68d80'),
+(0,'Password','g13b4512','0x9ff99961f3ddbfb1c52f3a3d780130e33c00094c'),
+(0,'Password','g14o7715','0xb6a980530e653474b64a1f27fc6dea151ca53123'),
+(0,'Password','g11a3007','0x65bf71631f431123ce1c1adf9abbd142aeb894d7'),
+(0,'Password','g26v4819','0xe8bfeb365b0d7cd4e113cb0c39d3e48de31038ce'),
+(0,'Password','g23l7881','0x61811a280b0d65153321ad0e0f2d72409878c431'),
+(0,'Password','g11u8767','0xedaeadb3ddb2f82667855775d9d842fd78ddad8d') ON CONFLICT(student_staff_id) DO NOTHING;
+\end{lstlisting}
+The results of the execution of the above SQL statement yields to the table illustrated in figure \ref{fig:eth_add}
+\end{enumerate}
+\newpage
+\subsection{Cross Platform Mobile Application} \label{userssection}
+A user can either be a student or a staff member of the university this is represented by the data model written in the solidity language code snippet below.
+\begin{lstlisting}[language=JavaScript, caption=Code representation of a user] 
+struct User {
+address id;
+string studentno_staff_no;
+uint credit;
+bool active;
+string[] usedBicycles;
+}
+\end{lstlisting}
+\begin{itemize}
+\item id\\
+An ethereum address is allocated to every student or staff member. This address will be used for identification purposes within the bicycle sharing platform as indicated by figure \ref{fig:eth_add}
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/StudentETH.PNG}
+\caption{A screenshot illustrating each users allocated ethereum address}
+\label{fig:eth_add}
+\end{figure}
+\newpage
+\item studentnostaffno\\
+This is the id used for identification outside of the bicycle sharing platform.
+\item credit \\
+This represents how much credit a user has to use within the platform, this credit will be linked to the users university account. Within the context of Rhodes University, users will be able to purchase credits similar to how they would purchase printing credits.
+\item active\\
+This is used to indicate if a user is registered on the bicycle sharing platform
+\item usedBicycles \\
+This is used to keep track of all bicycles used by a user.
+\end{itemize}
+\subsection{User Registration Process}
+Users are an imperative aspect of the proposed bicycle sharing system in order for a user to gain access to the bicycle sharing system they have to go through a verification process. The platform requires that the user either be a student or a staff member of the university, Figure \ref{fig:userverification} illustrates the processes involved in verifying a user's identity. 
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/Userlogin.jpg}
+\caption{An overview of the verification process of a user}
+\label{fig:userverification}
+\end{figure}
+\newpage
+When the mobile application is launched by the user as illustrated in figure \ref{fig:launcscreen} and \ref{fig:loginscreen}.
+\newpage
+\begin{figure}[!htb]
+\centering
+\begin{minipage}[b]{0.45\textwidth}
+\includegraphics[width=\textwidth]{figures/launchscreen.png}
+\caption{Launch Screen}
+\label{fig:launcscreen}
+\end{minipage}
+\hfill
+\begin{minipage}[b]{0.45\textwidth}
+\includegraphics[width=\textwidth]{figures/loginscreen.png}
+\caption{Login Screen}
+\label{fig:loginscreen}
+\end{minipage}
+\end{figure}
+\newpage
+
+The user will be prompted to enter their details as allocated by the university. Once a user has entered their login details, the code snippet below will be executed to verify their identity with the university student/staff database. For the purpose of this study, a PostgresSQL database is used to simulate the university database.
+
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=Code illustrating user verification against the university database ] 
+public async Task> VerifyStudentAysnc(LoginDetails details)
+{
+bool found = false;
+using (NpgsqlConnection connection = new NpgsqlConnection(Variables.connectionStringRhodesDB))
+{
+connection.Open();
+NpgsqlCommand command = new NpgsqlCommand("select * from student_staff where student_staff_id=" + "'" + details.User_ID + "'" + ";", connection);
+NpgsqlDataReader dataReader = command.ExecuteReader();
+dataReader.Read();
+var user_id = dataReader[2].ToString();
+var password = dataReader[1].ToString();
+var eth_address = dataReader[3].ToString();
+details.Ethereum_Address = eth_address;
+found = user_id == details.User_ID && password == details.Password;
+if (!found)
+{
+throw new LoginException("Invalid login credentials please ensure they match the ones you use to access ross or ruconnected");
+}
+connection.Close();
+command.Dispose();
+dataReader.Close();
+}
+return await Task.FromResult(new Tuple(found,details));
+}
+\end{lstlisting}
+On line 7 the \textbf{LoginDetails} passed in as an argument to the function are used in the SQL query which is sent to the simulated Rhodes university database. Line 15 checks if the returned user details match those passed in as arguments to the function if they are not the user is denied access as illustrated in figure \ref{fig:userverification}.In the instance a users login details are valid the user will be registered on the platforms the smart-contract this process takes 2 steps as explained below 
+
+\begin{enumerate}
+
+\item Application Side (Off-Chain) \\
+The below csharp code snippet is executed when a user is to be registered on the smart-contract on the application side
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=Code illustrating the csharp code adding a new user ] 
+public async Task> AddUserRequestAsync(LoginDetails details)
+{
+AddUserFunction addUserFunction = new AddUserFunction
+{
+FromAddress = details.Ethereum_Address,
+Gas = Variables.gas,
+Studentno_staff_no = details.User_ID
+};
+string receipt = "";
+bool exists = await UserExistsRequestAndWaitForReceiptAsync(details.Ethereum_Address).ConfigureAwait(false);
+if (exists)
+{
+db.StoreTransactionReceipt(new TransactionReciept { Receipt = "0x", Activity = "LoggedIn" });
+}
+else
+{
+receipt = await ContractHandler.SendRequestAsync(addUserFunction).ConfigureAwait(false);
+exists = await UserExistsRequestAndWaitForReceiptAsync(details.Ethereum_Address).ConfigureAwait(false);
+db.StoreTransactionReceipt(new TransactionReciept { Receipt = receipt, Activity = "Registered" });
+}
+return new Tuple(exists, receipt);
+}
+\end{lstlisting}
+The function on line 10 checks if the user is already registered on the smart-contract if the user is registered, the function logs this activity in the local realm database used to store all transaction receipts on the application. If the user is not registered on the smart-contract, the user is registered on the platforms smart-contract by sending a \textbf{send} transaction as indicated by line 17, once the user has been registered on the smart-contract the activity transaction is stored on the local transaction receipts database as indicated by line 19.
+
+\item Ethereum Virtual Machine (EVM) \\
+When a \textbf{send} transaction is sent to the EVM which runs the blockchain network the OM runs on, the following solidity function code snippet is executed
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=Code illustrating the solidity code adding a new user ]
+function addUser(string memory studentno_staff_no) public returns(bool) {
+require(msg.sender != address(0), "Invalid sender address in addUser function");
+require(!Users[msg.sender].active, "user already registered");
+Users[msg.sender].studentno_staff_no = studentno_staff_no;
+Users[msg.sender].active = true;
+Users[msg.sender].id = msg.sender;
+registeredUsersKeys.push(msg.sender);
+return true;
+}
+\end{lstlisting}
+A successful run of the function requires that a user has
+\begin{itemize}
+\item Enough gas\\
+Gas is a mechanism that the EVM requires to execute a transaction, this mechanism prevents code running infinitely, in the instance where a user sends gas that is not enough to complete the execution of the function the transaction will fail to complete its execution.
+\item Valid Ethereum address \\
+This requirement is to ensure that the user sending the transaction is not malicious, the malicious address is in the form \textbf{0x00000000000..} these addresses are also known as burner address and in the context of the platform smart-contract these addresses are not permitted. Checking for burner addresses is done in line 2 of the code snippet.
+\item Not Registered \\
+To ensure the contract and user don't overwrite any existing user data, a check to ensure that the user is not registered is done in line 3.
+
+\end{itemize}
+\end{enumerate}
+\begin{figure}[!htb]
+\centering
+\begin{minipage}[b]{0.45\textwidth}
+\includegraphics[width=\columnwidth]{figures/usererror.png}
+\caption{A screenshot illustrating user verification error }
+\label{fig:userverification}
+\end{minipage}
+\begin{minipage}[b]{0.45\textwidth}
+\includegraphics[width=\columnwidth]{figures/mainMenu.png}
+\caption{A screenshot illustrating the main application menu }
+\label{fig:mainMenu}
+\end{minipage}
+\end{figure}
+\newpage
+\subsection{Purchasing Bicycle Renting Credits}
+As mentioned in section \ref{userssection}, users of the bicycle sharing platform will be able to purchase ride credits which enable users to rent out bicycles through their university accounts, the process of purchasing ride credits is illustrated in figure \ref{fig:ridecredits}. 
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/PurchaseRideCredits.jpg}
+\caption{A screenshot illustrating the process of purchasing ride credits }
+\label{fig:ridecredits}
+\end{figure} 
+\newpage 
+The process of purchasing ride credits is completed by executing the following steps
+\begin{enumerate}
+\item Application Side (Off-Chain)\\
+When a user purchases ride credits the UI illustrated in figure \ref{fig:ridecreditsUI} the following code snippet is executed 
+
+\newpage
+\begin{figure}[!htb]
+\centering
+\begin{minipage}[b]{0.45\textwidth}
+\centering
+\includegraphics[width=\columnwidth]{figures/PurchaseCreditsUI.png}
+\caption{A screenshot illustrating the purchase ride credits UI }
+\label{fig:ridecreditsUI}
+\end{minipage} 
+\end{figure}
+\end{enumerate}
+
+\newpage
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=Code illustrating the csharp code purchasing ride credits ] 
+public async Task UpdateCreditRequestAsync(string address, int amount)
+{
+UpdateCreditFunction updateCreditFunction = new UpdateCreditFunction
+{
+FromAddress = address,
+Gas = Variables.gas,
+GasPrice = Variables.gasPrice,
+Credit = amount
+};
+string receipt = await ContractHandler.SendRequestAsync(updateCreditFunction).ConfigureAwait(false);
+db.StoreTransactionReceipt(new TransactionReciept { Receipt = receipt, Activity = "Purchased Ride Credits" });
+return receipt;
+}
+\end{lstlisting}
+The function \textbf{UpdateCreditRequestAsync} executes a \textbf{send} transaction to the bicycle sharing platforms smart-contract as illustrated by line 10 to update the users ride credit balance, the transaction receipt returned by the smart-contract is than stored on the local database on line 11 in the \textbf{UpdateCreditRequestAsync}.
+
+\item Ethereum Virtual Machine (EVM) \\
+When a \textbf{send} transaction is sent to the EVM, the \textbf{updateCredit} solidity function code snippet is executed 
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, basicstyle=\tiny, caption=Code illustrating the solidity function for purchasing ride credits]
+function updateCredit(address receipient) public payable onlyAdmin returns(bool) {
+require(receipient != address(0), "Invalid sender address in updateCredit function");
+require(Users[receipient].active, "user not registered");
+require(msg.sender != receipient, "cannot top up admin credits");
+require(msg.value > 0, "new credit must be greater than 0");
+Users[receipient].credit = Users[receipient].credit.add(msg.value);
+rideCreditsBought = rideCreditsBought.add(msg.value);
+return true;
+}
+\end{lstlisting}
+The \textbf{updateCredit} function requires that an admin updates a users ride credit balance as illustrated in line 1 by the \textbf{onlyAdmin} keyword, due to the public nature within Rhodes University of the blockchain network that forms part of the OM, its not guaranteed to ensure complete privacy of the contracts data to provide form of access control the \textbf{onlyAdmin} keyword is used. The \textbf{payable} keyword enables Ether to be sent to the contract, this ether will be the amount of ride credits a user purchases. When user \textbf{g14m1190} purchases ride credits as illustrated in the UI in figure \ref{fig:g14m1190ridecreditsUI} and \ref{fig:g14m1190credited}, user \textbf{g14m1190} balance is updated on line 6 and the total amount of ride credits the platform has sold is updated on line 6.
+\begin{figure}[!htb]
+\centering
+\begin{minipage}[b]{0.45\textwidth}
+\centering
+\includegraphics[width=\columnwidth]{figures/updating.jpg}
+\caption{A screenshot illustrating user g14m1190 purchasing ride credits }
+\label{fig:g14m1190ridecreditsUI}
+\end{minipage} 
+\begin{minipage}[b]{0.45\textwidth}
+\centering
+\includegraphics[width=\columnwidth]{figures/updated.jpg}
+\caption{A screenshot illustrating user g14m1190 updated ride credits }
+\label{fig:g14m1190credited}
+\end{minipage} 
+\end{figure}
+\newpage
+After crediting user \textbf{g14m1190} ride credits on the smart-contract, the amount \textbf{100} will be charged to user \textbf{g14m1190} student account as illustrated by figure \ref{fig:chargecredit}. The code executed which updates credits 100 ride credits to user \textbf{g14m1190} student account is listed below
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/aftercreditUpdate.PNG}
+\caption{A screenshot illustrating 100 ride credits being charged to g14m1190 student account } 
+\label{fig:chargecredit}
+\end{figure}
+\newpage
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=Code illustrating the process of crediting a users recently purchased credits to their student accounts]
+public async Task ChargeUserRideCreditBalanceToAccount(LoginDetails details)
+{
+bool charged = false;
+using (NpgsqlConnection connection = new NpgsqlConnection(Variables.connectionStringRhodesDB))
+{
+connection.Open();
+NpgsqlCommand command = new NpgsqlCommand("UPDATE student_staff SET ride_credit= '" + details.RideCredits.ToString() + "' where student_staff_id=" + "'" + details.User_ID + "'" + ";", connection);
+NpgsqlDataReader dataReader = command.ExecuteReader();
+dataReader.Read();
+charged = !charged;
+}
+return await Task.FromResult(charged);
+}
+\end{lstlisting}
+on line 7 an \textbf{UPDATE} SQL statement is constructed to charge the 100 ride credits to user \textbf{g14m1190} student account. 
+\subsection{Renting a Bicycle}
+As mentioned in section \ref{designConsideration} a Raspberry Pi3B will be used to simulate a bicycle and a bicycle docking station. Figure \ref{fig:archbicycle} illustrates the overall architecture for the process of renting a bicycle, this process consists of 5 sub-processes as explained below
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/DesignOverViewDiagram.jpg}
+\caption{The overall architecture of renting a bicycle}
+\label{fig:archbicycle}
+\end{figure}
+\newpage
+\begin{enumerate}
+\item Request Connection \\
+This step involves the user requesting available bicycles at a particular docking station through the use of the UI as illustrated by figure \ref{fig:dockingStationsView} 
+
+\begin{figure}[!htb]
+\centering
+\begin{minipage}[b]{0.45\textwidth}
+\centering
+\includegraphics[width=\columnwidth]{figures/dockingStationsView.jpg}
+\caption{The architecture of the process of renting and docking a bicycle}
+\label{fig:dockingStationsView}
+\end{minipage}
+\begin{minipage}[b]{0.45\textwidth}
+\centering
+\includegraphics[width=\columnwidth]{figures/availablebicycles.jpg}
+\caption{A screenshot illustrating available bicycles at the Hamilton Building docking station}
+\label{fig:hamiltonDocking}
+\end{minipage} 
+\end{figure}
+
+\newpage
+\item Connection Status \\
+This relates to the information associated with a particular docking station specifically information about docked bicycles as illustrated by the UI in figure \ref{fig:hamiltonDocking}.
+Each docking stations information is fetched in two steps as explained below
+\begin{enumerate}
+\item Application Side (Off-Chain) \\
+Each docking station is registered using the Management system which will be explained in a later section, this information is fetched by the mobile application using the below code snippet
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=Code illustrating the code executed when fetching a docking stations information]
+public async Task GetDockingStationQueryAsync
+(){
+LoginDetails details = new RhodeITDB().GetUserDetails();
+GetDockingStationFunction getDockingStationFunction = new
+GetDockingStationFunction
+{
+Gas = Variables.gas,
+FromAddress = details.Ethereum_Address
+};
+GetDockingStationOutputDTO stationDetails = await ContractHandler.QueryDeserializingToObjectAsync(getDockingStationFunction, null).ConfigureAwait(false);
+return stationDetails;
+}
+\end{lstlisting}
+On line 9 all registered docking stations registered by an administrator on the smart-contract are fetched using the \textbf{GetDockingStationsFunctions}, This information is then returned back to the UI thread as indicated by line 10, which then updates the map with the docking station information as illustrated by bicycle icons on the UI in figure \ref{fig:dockingStationsView}. 
+\item Ethereum Virtual Machine (EVM)\\
+The solidity function executed when fetching information related to a docking station is as follows
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=Solidity code executed when fetching a docking stations information]
+function getDockingStation(string memory stationName) public view returns
+(string memory, string memory, string memory, uint256) {
+require(msg.sender != address(0), "Invalid sender address");
+return (dockingStations[stationName].dockingStationInformation.name, dockingStations[stationName].dockingStationInformation.latitude, dockingStations[stationName].dockingStationInformation.longitude,
+dockingStations[stationName].availableBicyclesKeys.length);
+}
+\end{lstlisting}
+The \textbf{getDockingStation} is marked as as being of type \textbf{view} to prevent function callers from modifying a docking stations information, a docking stations information such as
+its latitude and longitude and the number of available bicycles docked at the particular docking station are returned on line 4.
+\end{enumerate} 
+\item Hire Bicycle \\
+This step involves the process of hiring a bicycle by selecting one from the list illustrated in the UI in figure \ref{fig:hamiltonDocking}, each docking station will be running a \textbf{NodeJS} server as illustrated by figure \ref{fig:archbicycle}, which will be responsible for unlocking all bicycle docked in its premises specific details and design considerations of the usage of a NodeJS server will be explained in section \ref{}. When user \textbf{g14m1190} selects a bicycle from the list of available bicycles in the docking station \textbf{Hamilton Building} the following requirements are checked to successfully reserve a bicycle . These processes are illustrated by figure \ref{fig:hirebicycle}
+
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/HireBicycle.jpg}
+\caption{Figure illustrating the processes involved when renting a bicycle}
+\label{fig:hirebicycle}
+\end{figure}
+Due to the code snippet length of the processes illustrated by figure \ref{fig:hirebicycle} the code which is executed on the the EVM, application side (off chain) and by the NodeJS server is available on the following GitHub repo files
+
+\begin{enumerate}
+\item Application Side (Off-Chain) \\
+\url{https://github.com/Brianspha/Rhode-IT/blob/master/RhodeIT/RhodeIT/Services/RhodeITService.cs#L110}
+\item Ethereum Virtual Machine (EVM) \\
+\url{https://github.com/Brianspha/RhodeIT-Bicycle-Sharing-Platform-Management-System/blob/master/contracts/RhodeIT.sol#L259}
+\item Node JS Docking Station Server\\
+\url{https://github.com/Brianspha/RhodeIT-Bluetooth-Server/blob/master/scripts/server.js#L16}
+\end{enumerate}
+Every run of the processes illustrated by figure \ref{fig:hirebicycle}, will yield to a transaction receipt being sent to the mobile application as proof of a successful or unsuccessful rental. This receipt can be used by a user to prove that they have borrowed out a bicycle in the instance where there are issues with unlocking the bicycle, or in the there is a power outage at the specific docking station. The user can verify this transaction receipt through the blockchain explorer explained in section \ref{dcons}, these transaction receipts are accessed through the \textbf{Transaction History} UI as illustrated by figure \ref{fig:transactionHistUI}
+
+\begin{figure}[!htb]
+\centering
+\begin{minipage}[b]{0.45\textwidth}
+\centering
+\includegraphics[width=\columnwidth]{figures/transactionHistory.jpg}
+\caption{A screenshot illustrating the Transaction History UI}
+\label{fig:transactionHistUI}
+\end{minipage}
+\end{figure}
+\newpage
+
+\item Send Transaction for Ordering \\
+This step involves sending the rental request transaction for ordering since client nodes are not permitted to order transactions. \newpage
+\item Unlock Bicycle \\
+This step involves the NodeJS server simulating the unlocking of a bicycle, the results of unlocking a bicycle lights turns on a light connected to a raspberry Pi3B GPIO board as illustrated figure \ref{fig:unlockedGPIO}
+
+\begin{figure}[!htb]
+\centering
+\begin{minipage}[b]{0.45\textwidth}
+\centering
+\includegraphics[width=\columnwidth]{figures/unlockedBicycle.jpg}
+\caption{A screenshot illustrating the results of unlocking a bicycle by turning on a light}
+\label{fig:unlockedGPIO}
+\end{minipage}
+\end{figure}
+
+Detailed design considerations and architecture of the NodeJS Server will be discussed in section \ref{}.
+\end{enumerate}
+
+\subsection{Docking a Bicycle}
+The process of docking a bicycle consists of 3 subprocesses as illustrated by figure \ref{fig:dockOverView} theses processes are explained below
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/DockBicyleOverview.jpg}
+\caption{An overview of the processes involved when a user docks a bicycle}
+\label{fig:dockOverView}
+\end{figure}
+\newpage
+\begin{enumerate}
+\item Dock Bicycle\\
+This involves a user docking a bicycle at any docking station around the university campus, the specific execution of this process is illustrated by the process diagram in figure \ref{fig:dockprocess}.
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/DockBicycle.jpg}
+\caption{Process diagram illustrating the different sub-process involved when docking a bicycle}
+\label{fig:dockprocess}
+\end{figure}
+\newpage
+
+When user \textbf{g14m1190} docks a bicycle picked in the list of bicycles as illustrated by the UI in figure \ref{fig:hamiltonDocking}, this bicycle will be shown on the main user profile UI as illustrated by the UI in figure \ref{fig:mainUI}
+
+\begin{figure}[!htb]
+\centering
+\begin{minipage}[b]{0.45\textwidth}
+\centering
+\includegraphics[width=\columnwidth]{figures/dockUI.jpg}
+\caption{A screenshot illustrating the main user UI}
+\label{fig:mainUI}
+\end{minipage}
+\end{figure}
+\newpage
+When user \textbf{g14m1190} clicks on the dock button, this will send a \textbf{dock} request to the docking station user \textbf{g14m1190} has selected to dock the bicycle in. A successful check of the pre-requisites required to dock a bicycle will send a \textbf{lock} request to the NodeJS server which will in turn lock the bicycle by turning off the light controlled through the GPIO on the raspberry Pi3B, the locked bicycle is illustrated by the turned off light in figure \ref{fig:lockedGPIO}
+
+\begin{figure}[!htb]
+\centering
+\begin{minipage}[b]{0.45\textwidth}
+\centering
+\includegraphics[width=\columnwidth]{figures/lockedBicycle.jpg}
+\caption{A screenshot illustrating the results of locking a bicycle by turning off a light}
+\label{fig:lockedGPIO}
+\end{minipage}
+\end{figure}
+\newpage
+
+
+\end{enumerate}
+\section{The Management System}
+The purpose of the Management system is to aid in the management of the following system artifacts 
+\begin{enumerate}
+\item Docking Stations
+\item Bicycles
+\item Users
+\end{enumerate}
+This system will be written in JavaScript will utilize the Metamask extension explained in section \ref{extensions} to aid in the registration of the system artifacts with the bicycle sharing platforms smart-contract.
+\newpage
+\subsection{Docking Station}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/bike.PNG}
+\caption{A picture illustrating a Fixed Portable Docking Station}
+\label{fig:dockFlex}
+\end{figure}
+\newpage
+
+Fixed Portable Docking Stations will be deployed at all registered docking station within the Rhodes University campus as illustrated by figure \ref{fig:dockFlex}, the reasons for the usage of this type of docking station over alternative docking stations follow,
+\begin{enumerate}
+\item Mobility \\
+Due to the ever-changing student/staff population, the number of docking stations required will change, this requires that the docking stations be mobile
+\item Addition of Docking Stations\\
+As more students and staff members are admitted to the university each docking station needs to be able to accommodate the number of incoming student/staff users
+\end{enumerate}
+\subsection{Design Considerations}
+Docking station information will be stored on the platforms smart-contract, each docking station will be represented by a raspberry Pi3B 
+\subsection{Data Models}
+A Docking Station will have the properties illustrated by the solidity code below
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=Solidity code illustrating a docking stations properties]
+struct VenueLocation {
+string name;
+string longitude;
+string latitude;
+bool active;
+}
+
+struct DockingStation {
+string id;
+VenueLocation dockingStationInformation;
+string[] availableBicyclesKeys;
+mapping(string => Bicycle) availableBicycles;
+bool active;
+}
+\end{lstlisting}
+\begin{enumerate}
+\item name \\
+This property refers to the name of the docking station on campus
+\item longitude \\
+Represents the longitude position of the docking station on the world map
+\item latitude \\
+Represents the latitude position of the docking station on the world map
+\item active \\
+Indicates whether a particular venue exists on the smart-contract storage 
+\end{enumerate}
+\begin{enumerate}
+\item id \\
+Represents the id of the docking station, this id the name of the venue which has been assigned as a docking station
+\item dockingStationInformation \\
+This represents the docking station information i.e. longitude, latitude, and name
+\item availableBicycles \\
+This represents the bicycle available at a particular docking station
+\item active \\
+Indicates whether a particular docking station exists on the smart-contract storage 
+\end{enumerate}
+The architectural overview of the process of registering a new docking station is illustrated by figure \ref{fig:dockingStationArchitecture} 
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/ArchitectureDockingStationRegistration.jpg}
+\caption{Architecture overview of the process of registering a new docking station}
+\label{fig:dockingStationArchitecture}
+\end{figure}
+\newpage
+The \textbf{EmbarkJS} framework will be used to interact with the metamask extension which enables access to the smart-contract storage. Docking station information is loaded from a local GEOJSON file which contains map data.
+
+\subsection{Docking Station Registration}
+Each docking station will be registered on the bicycle-sharing platform through the use of the Management DApp by navigating to the \textbf{Add New Docking Station} UI option as indicated by the UI in figure \ref{fig:dockingStationAdmin}.
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/dockingStationAdmin.PNG}
+\caption{A screenshot illustrating the Add New Docking Station Option}
+\label{fig:dockingStationAdmin}
+\end{figure}
+\newpage
+
+The list illustrated in the UI in figure \ref{fig:dockingStationAdmin} represents all venues on the Rhodes University campus, to register a new docking the system administrator will need to click on the \textbf{Register Docking Station} as illustrated by the UI in figure \ref{fig:addDockingStationAdmin}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/registerDockingStation.png}
+\caption{A screenshot illustrating the Add New Docking Station button Option}
+\label{fig:addDockingStationAdmin}
+\end{figure}
+\newpage
+
+The results of clicking on the \textbf{Register Docking Station} button will open up \textbf{Metamask} which will prompt the administrator to input the amount of \textbf{gas} and \textbf{gas price} for the transaction as illustrated by the UI in figure \ref{fig:metamaskDockingStationAdd} and \ref{fig:metamaskDockingStationAdd1}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/metamaskDockingStationAdd.PNG}
+\caption{A screenshot illustrating the results of clicking on the register docking station button}
+\label{fig:metamaskDockingStationAdd}
+\end{figure}
+\newpage
+
+\begin{figure}[!htb]
+\centering
+\begin{minipage}[b]{0.45\textwidth}
+\centering
+\includegraphics[width=\columnwidth]{figures/metamaskDockingStationAdd1.PNG}
+\caption{A screenshot illustrating the metamask UI}
+\label{fig:metamaskDockingStationAdd1}
+\end{minipage}
+\end{figure}
+\newpage
+For the registration of the docking station \textbf{Union Steve Biko Building} the \textbf{gas price} is set to 80000 mainly to ensure that the transaction gets mined by the \textbf{sealer nodes} as fast as possible, the higher the gas price the faster the transaction gets mined. The \textbf{gas limit} is set to 8000000 which is the maximum gas limit allowed by the blockchain network that forms part of the OM which the bicycle sharing platform runs on. The on and off-chain code executed during addition of a new docking station is explained below
+
+\begin{enumerate}
+\item Application Side (Off-Chain) \\
+The Javascript (JS) code executed when an administrator adds a new docking is as follows
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=Code illustrating the JS code executed]
+registerDockingStation: async function () {
+this.isLoading = true
+let This = this
+var receipt = await this.RhodeITSmartContract.methods.registerDockingStation(this.selectedVenue
+.name, this
+.selectedVenue.position.lat.toString(), this.selectedVenue.position.lng.toString()).send({
+gas: 8000000
+})
+
+if (!receipt) {
+This.error("Something went wrong: ", err)
+} else {
+This.success("Successfully Registered Docking Station")
+This.loadContract()
+console.log("Successfully registered docking station receipt: ",receipt);
+}
+This.isLoading = false
+}
+\end{lstlisting}
+Line 4 initiates the interaction with the \textbf{metamask} extension by calling the compiled \textbf{JSON ABI} version of the bicycle sharing platform smart-contracts, a successful execution of the \textbf{registerDockingStation} function will yield to a transaction receipt being sent back to the administrator as illustrated by line 15. \newpage
+\item Ethereum Virtual Machine (EVM)
+The solidity code executed on the EVM on the blockchain network that forms part of the OM is listed below 
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=Solidity code illustrating register Docking station function]
+function registerDockingStation(string memory name, string memory latitude, string memory longitude) onlyAdmin public returns(bool) {
+require(msg.sender != address(0), "Invalid sender address");
+require(!dockingStations[name].active, "Docking Station already exits");
+dockingStations[name].id = name;
+dockingStations[name].dockingStationInformation.name = name;
+dockingStations[name].dockingStationInformation.longitude = longitude;
+dockingStations[name].dockingStationInformation.latitude = latitude;
+dockingStationKeys.push(name);
+dockingStations[name].active = true;
+return true;
+}
+\end{lstlisting}
+
+The \textbf{registerDockingStation} only permits the smart-contract deployer also coined as the \textbf{admin} to register new docking stations, this is indicated by the \textbf{onlyAdmin} keyword. 
+
+\end{enumerate}
+\newpage
+\subsection{Viewing Registered Docking Station}
+The overall architecture illustrated by figure \ref{fig:ViewDockingStationsArch} of how docking stations are loaded to the map UI illustrated by the UI in figure \ref{fig:dockingStationsViewAdmin}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/ViewDockingStationsArch.jpg}
+\caption{The overall architecture of viewing all registered docking stations}
+\label{fig:ViewDockingStationsArch}
+\end{figure}
+\newpage
+
+All registered docking station will can be viewed by selecting the \textbf{view Docking Stations} UI option as illustrated by the UI in figure \ref{fig:dockingStationsViewAdmin}
+
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/dockingStationsView.PNG}
+\caption{A screenshot illustrating a map of all campus venues with docking stations}
+\label{fig:dockingStationsViewAdmin}
+\end{figure}
+\newpage
+
+Each venue is represented by a \textbf{blue marker, the green, orange and yellow} markers are clustered locations. Each venues details is revealed by clicking on each marker, each venues information is displayed by a popup window as illustrated by the UI in figure \ref{fig:veneuInfoAdmin} and \ref{fig:dockingStationInfo}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/veneuInfo.PNG}
+\caption{A screenshot illustrating a venues information on the map}
+\label{fig:veneuInfoAdmin}
+\end{figure}
+\newpage
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/dockingStationInfo.PNG}
+\caption{A screenshot illustrating a venues information popup window}
+\label{fig:dockingStationInfo}
+\end{figure}
+\newpage
+
+\subsection{Bicycles}
+The bicycles which will be used by the bicycle sharing platform in the instance of real-world deployment, will be the \textbf{RALEIGH 26" Alpine Mountain Bike} as illustrated by the image in figure \ref{fig:Raleigh} the reasons selecting this specific bicycle are as follows.
+
+\begin{figure}[!htb]
+\centering
+\begin{minipage}[b]{0.45\textwidth}
+\centering
+\includegraphics[width=\columnwidth]{figures/raleigh.jpg}
+\caption{Adapted from \url{https://raleighintl.com/alpine-2-2-26-blue/}:An image showing the Raleigh mountain bicycle}
+\label{fig:Raleigh}
+\end{minipage}
+\end{figure}
+\newpage
+
+
+\begin{enumerate}
+\item Affordable \\
+The Raleigh mountain bike is a cheap reliable bicycle. 
+\item Ease of Use \\
+With the majority of the student population living on the upper part of the university campus, the bike is suited for riding steep roads such as the one that leads to the upper part of the university campus.
+
+\end{enumerate}
+
+\subsection{Design Consideration}
+Each bicycle will be stored on the bicycle sharing platforms smart-contract, a bicycle will have the properties as defined by the solidity code snippet below.
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=Solidity code illustrating a bicycles properties]
+struct Bicycle {
+string id;
+string dockedAt;
+bool active;
+bool isDocked;
+address[] userHistory;
+uint lastDateBorrowed;
+uint256 index;
+}
+\end{lstlisting}
+
+\begin{enumerate}
+\item id\\
+Unique identification for the current instance of the Bicycle
+\item dockedAt\\
+Indicates where the bicycle is currently docked or which docking station its docked in
+\item userHistory\\
+Used to keep track of all Users who have used the Bicycle
+\item isDocked\\
+Indicate if the bicycle is docked or not.
+\item active\\
+Indicate if the instance exists or not.
+\item userHistory \\
+Used to keep track of all Users who have used the Bicycle
+\item lastDateBorrowed\\
+Indicate the last time the bicycle was rented out.
+\item index\\
+Represent the index location of the docking station in the global mapping of docking stations.
+\end{enumerate}
+
+\subsection{Docking Station Node Server}
+As mentioned in earlier sections due to limitations in automatically pairing bicycle via code, the process of locking and unlocking a bicycle will be simulated by turning on a light controlled via a Raspberry Pi's GPIO board through the use of the NodeJS run time environment which allow for the controlling of the Raspberry GPIO board. The code for the server is available on the projects Github repository on the following url \url{https://github.com/Brianspha/RhodeIT-Bluetooth-Server}.
+
+\subsection{Launching the NodeJS Server}
+To launch the NodeJS server the package provided by the node package manager (npm) coined as \textbf{nodemon} will be used to launch and monitor the running of the server.The \textbf{nodemon} package can be installed by running the below code on a bash terminal
+
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=Keywords required to install the nodemon package]
+
+npm install -g nodemon
+\end{lstlisting}
+This will install the package and store it in the folder titled \textbf{node_modules}, a \textbf{Package.JSON} file will also be generated which can be used to install the package in the instance a new docking station being registered.
+Navigating to the file in the folder \textbf{scripts}, running the below code on the bash terminal will launch the NodeJS Server 
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=Bash code used to launch and monitor the NodeJS server]
+
+nodemon server.js
+
+\end{lstlisting}
+The results of running the code snippet above are illustrated by the screenshot in figure \ref{fig:bashDocking}
+
+\begin{figure}[!htb]
+\centering
+\centering
+\includegraphics[width=\columnwidth]{figures/bashDocking.png}
+\caption{Screenshot illustrating the results of launching the nodejs server}
+\label{fig:bashDocking}
+\end{figure}
+\newpage
+
+\subsection{Bicycle Registration}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/bicycleArch.jpg}
+\caption{The overall architecture of adding a new bicycle}
+\label{fig:bicycleArch}
+\end{figure}
+
+The overall architecture of adding a new bicycle is illustrated by figure \ref{fig:bicycleArch}, each bicycle will be assigned a unique id generated by the \textbf{ID Generator}, the id generator powered the Node Package manager (npm) package coined \textbf{crypto}, crypto generates cryptographically strong pseudo-random data. The JavaScript code responsible for the generation of the generation of each bicycle is as follows.
+
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=JavaScript code responsible for generating a Bicycle ID]
+bikeId: crypto.randomBytes(16).toString("hex"),
+\end{lstlisting}
+The registration of each bicycle is done through the \textbf{Register New Bicycle} UI option as illustrated by the UI in figure \ref{fig:bicycleRegistrationView}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/bicycleRegistrationView.PNG}
+\caption{A screenshot illustrating the Register New Bicycle UI}
+\label{fig:bicycleRegistrationView}
+\end{figure}
+When an administrator adds news a bicycle, all registered docking stations will be loaded onto the drop down list as illustrated by the UI in figure \ref{fig:dockingList}, selecting a docking station from the drop down list and clicking on the \textbf{Register} button will initialise the \textbf{metamask} extension as illustrated by the UI in figure \ref{fig:registerBicycleMetamask}
+
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/dockingList.PNG}
+\caption{A screenshot illustrating the drop down list with registered docking stations}
+\label{fig:dockingList}
+\end{figure}
+\newpage
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/registerBicycleMetamask.PNG}
+\caption{A screenshot illustrating metamask UI for adding a new bicycle}
+\label{fig:registerBicycleMetamask}
+\end{figure}
+\newpage
+A successful execution of the transaction will result in the new bicycle with the id \textbf{d9abf870bba1303eb1ca82d05966d381} being added to the smart-contract storage.
+\newpage
+\subsection{View All Registered Bicycles}
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/registeredBicyclesArch.jpg}
+\caption{A screenshot illustrating metamask UI for adding a new bicycle}
+\label{fig:registeredBicyclesArch}
+\end{figure}
+\newpage
+Figure \ref{fig:registeredBicyclesArch} illustrates the overall architecture of how registered bicycles are loaded into the UI list of registered bicycle. Both the on (EVM) and off chain code executed when registered bicycles are loaded illustrated by the code snippet below
+\begin{enumerate}
+\item Application Side (Off-Chain) \\
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=Javascript code responsible fetching all registered bicycles]
+loadAllRegisteredBicycles: async function ($state) {
+let This = this
+this.RhodeITSmartContract.methods.getRegisteredBicycleKeys().call({
+gas: 8000000
+}).then((keys, err) => {
+if (!err) {
+console.log(keys)
+keys.forEach((key) => {
+This.RhodeITSmartContract.methods.getBicycle(key).call({
+gas: 8000000
+}).then((dockedAt, err) => {
+if (!err) {
+$state.loaded()
+This.bicycles.push({
+bikeID: key,
+dockedAt: dockedAt[0],
+available: dockedAt[1] === true ?
+"Available" : "Not Available"
+})
+}
+})
+})
+$state.complete()
+}
+}).catch((err) => {
+console.log(err)
+This.error('Something went wrong whilst loading registered bicycles.')
+})
+}
+\end{lstlisting}\newpage
+Line 4 illustrates the interaction with the \textbf{JSON ABI} version of the bicycle sharing platform smart-contract by sending a \textbf{call} transaction to the method \textbf{getBicycle}, all registered bicycles are loaded onto the list rendered by the UI in figure \ref{fig:registeredBicyclesList}
+
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/registeredBicyclesList.PNG}
+\caption{A screenshot illustrating metamask UI for adding a new bicycle}
+\label{fig:registeredBicyclesList}
+\end{figure}
+\newpage
+
+\item Ethereum Virtual Machine (EVM) \\
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=Solidity code responsible fetching a registered bicycle]
+function getBicycle(string memory bicycleId) public view returns(string memory, bool) {
+return (bicycles[bicycleId].dockedAt, bicycles[bicycleId].isDocked);
+}
+\end{lstlisting}
+The function is marked as view to prevent any modifications of each bicycle from being modified by the caller, each bicycles information is returned on line 2. This information relates to where the bicycle is currently docked at and if the bicycle is docked.
+\end{enumerate}
+
+
+\subsection{Users}
+An administrator can view all users of the bicycle sharing platform through the use of the UI illustrated in figure \ref{fig:registeredUsersOption}, this will allow administrators to ban users in the instance of paltform abuse. The overall architecture of how users are fetched from the bicycle sharing platforms smart-contract is illustrated by figure \ref{fig:RegisteredUsersArch}
+
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/registeredUsersOption.PNG}
+\caption{A screenshot illustrating the the View Registe}
+\label{fig:registeredUsersOption}
+\end{figure}
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/RegisteredUsersArch.jpg}
+\caption{The overall architecture of how bicycles are fetched from the smart-contract}
+\label{fig:RegisteredUsersArch}
+\end{figure}
+\newpage
+
+The on and off chain code executed when an administrator click on the \textbf{View Registered Users} option is listed below
+\begin{enumerate}
+\newpage
+\item Application Side (Off-Chain) \\
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=JavaScript code illustrating the loading of all registered users]
+loadAllRegisteredUsers: async function ($state) {
+let This = this
+this.RhodeITSmartContract.methods.getAllRegisteredUserKeys().call({
+gas: 8000000
+}).then((keys, err) => {
+if (!err) {
+console.log(keys)
+$state.loaded() 
+keys.forEach((key) => {
+This.RhodeITSmartContract.methods.getUsercredit().call({
+gas: 8000000,
+from:key
+}).then((credit, err) => {
+if (!err) {
+This.Users.push({
+userID: key,
+rideCreditBalance: credit
+})
+}
+})
+})
+}
+}).catch((err) => {
+console.log(err)
+This.error('Something went wrong whilst loading registered users.')
+})
+$state.complete()
+}
+\end{lstlisting}
+All registered user keys are loaded on line 15 of the code listing to the list rendered in the UI illustrated by the UI in figure \ref{fig:registeredUsersOption}
+\item Ethereum Virtual Machine (EVM) \\
+\begin{lstlisting}[linewidth=\columnwidth,breaklines=true,language=C++, caption=Solidity code illustrating the function which returns all registered user keys]
+function getAllRegisteredUserKeys() onlyAdmin public view returns(address[] memory) {
+return registeredUsersKeys;
+}
+\end{lstlisting}
+The \textbf{getAllRegisteredUserKeys} can only be called by an administrator as indicated by the keyword \textbf{onlyAdmin}, all registered user keys are returned on line 2.
+\end{enumerate}
+
+\newpage 
+\chapter{Conclusion}
+\section{Overview}
+This study advocated for the development of a smart transportation platform as a use case within the context of a smart university campus such as Rhodes University. The main goals of this platform were to resolve some of the issues related to parking spaces on campus, and the distance of the upper campus residences from lecture venues. The lack of available literature related to IoT being used in conjunction with blockchain technology presented many issues, specifically the usage of Raspberry Pis as blockchain network nodes. 
+
+\section{Summary of Research Aim and Objectives}
+Below is the list of research aims and objectives as identified in Section \ref{aimsAndObjectives}
+\begin{itemize} 
+\item Provide a comprehensive study on how the Internet of Things, blockchain technology and mobile devices can be used within the context of a smart university campus such as Rhodes University.
+\item Determine the requirements and specifications for integrating IoT, Blockchain Technology, Smart Locks and Mobile devices to aid in the development of a Bicycle sharing platform.
+\item Carry out the requirements elicitation and analysis for integrating IoT, Blockchain Technology, Smart Locks and Mobile devices for the Bicycle sharing platform.
+\item Develop a mobile-controlled Bicycle sharing platform.
+\item Conduct an evaluation of the Platform and mobile application for usability and acceptability.
+\end{itemize}
+\section{Evaluation of Research Aim and Objectives}
+All but parts of the third research objective where achieved. The part which successfully prevented achieving the third research objective is related to the usage of smart locks, specifically the automatic pairing of Bluetooth locks via the \textbf{PyBluez} python API. 
+
+
+
+\section{Future Studies}
+\begin{figure}[!htb]
+\centering
+\includegraphics[width=\columnwidth]{figures/usecase.jpg}
+\caption{The Overall Model}
+\label{fig:overallModelL}
+\end{figure}
+
+Future studies that could be undertaken within the context of a smart university campus using the OM \ref{fig:overallModelL} could be about investigating several use cases that aim at improving the student/staff member's everyday life whilst on the smart university campus such as Rhodes University. The following are examples of such case studies:
+\begin{itemize}
+\item Developing a smart watch application to track and log the student/staff's daily activity data such as their location on campus at any given time. This data is stored on a smart contract running on the blockchain. The data collected by the smart watch could be used to correlate health issues related to students and staff members, performance of students in relation to their daily activity and many other parameters. 
+\item Using an alternative consensus mechanism such as Proof of work, Proof of Stake to determine their compatibility with IoT devices within the bicycle-sharing platform
+\item Better design decisions could be made in designing the specific use cases applied in this study. Current API's which enable interaction with blockchain networks are limited in their functionality which results in the creation of \textbf{hacky} solutions being in order to get things to work
+\item Another study could be investigating the usage of alternative blockchain solutions such as Hyperledger Fabric as the primary blockchain network powering the OM 
+\item Due to limitations, and specifically the error produced by the bluez python API \url{https://github.com/pybluez/pybluez} \textbf{bluetooth.btcommon.
+BluetoothError: (13, 'Permission denied')} related to the automatic paring of devices via code, a further study could look into the reasons why the aforementioned error is difficult to bypass which results in the simulation of the process of unlocking and locking a bicycle and not an actual programmable lock
+\item A further study could be conducted into investigating the practicality of deploying the bicycle sharing platform within the context of Rhodes University
+\end{itemize}
+
+
+\newpage
+\nocite{*}
+
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\end{document}
+
+
+\bibliographystyle{infosecMsc} % authordate style 
+
+\bibliography{ref} % load in the info produced from ref.bib 
+
+
+\end{document}
+
+
+
+
