@@ -1,4 +1,4 @@
-# shintsha-e-commerce
+# Shintsha-E-Commerce
 
 ## Project setup
 ```
