@@ -33,7 +33,7 @@
                 <v-row justify="center">
                     <v-col cols="12" sm="12" md="6">
                         <v-row align="center">
-                            <v-overlay class="ovr_lay" color="transparent" :absolute="absolute" :opacity="1" :value="!this.$store.state.registered" :z-index="1" light>
+                            <v-overlay class="ovr_lay" color="transparent" :absolute="false" :opacity="1" :value="!this.$store.state.registered" :z-index="1" light>
                                 <vloginform></vloginform>
                             </v-overlay>
                         </v-row>
@@ -62,49 +62,14 @@ export default {
                 title: "Register as Delivery Services"
             }
         ],
-        items: [
-            'Item 1',
-            'Item 2',
-            'Item 3',
-            'Item 4',
-        ],
-        nameRules: [
-            v => !!v || 'Name is required',
-            v => (v && v.length <= 10) || 'Name must be less than 10 characters',
-        ],
-        emailRules: [
-            v => !!v || 'E-mail is required',
-            v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
-        ],
         isRegistered: false,
         tab: null,
-        tab_login: null,
-        checkbox: false,
-        valid: true,
-        name: '',
-        email: '',
-        select: null,
     }),
     beforeMount() {
         this.isRegistered = this.$store.state.registered;
-        console.log(this.isRegistered)
+        //console.log(this.isRegistered)
     },
-    methods: {
-        validate() {
-            if (this.$refs.form.validate()) {
-                this.snackbar = true
-            }
-        },
-        reset() {
-            this.$refs.form.reset()
-        },
-        resetValidation() {
-            this.$refs.form.resetValidation()
-        },
-        onManualFlip() {
-            this.$refs.flipcard.flip()
-        }
-    },
+    methods: {},
 }
 </script>
 

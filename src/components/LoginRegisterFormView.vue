@@ -5,30 +5,28 @@
         <v-col class="form">
             <v-flex class="tab-content">
                 <v-col id="signup">
-
                     <v-form action="/" method="post">
                         <v-col>
                             <h1 class="remove_margin">Sign Up</h1>
                         </v-col>
                         <v-text-field label="Cell-Phone Number" v-model="cellNumber" :rules="cellPhoneNumberRules"></v-text-field>
                         <v-select :items="countries" label="Country" v-model="country"></v-select>
-                        <v-text-field :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :rules="[rules.required, rules.min]" :type="show3 ? 'text' : 'password'" name="input-10-2" label="Set a Password" hint="At least 8 characters" class="input-group--focused" v-model="password" @click:append="show1 = !show1"></v-text-field>
-                        <v-text-field :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'" :rules="[rules.required, rules.min]" :type="show4 ? 'text' : 'password'" name="input-10-2" label="Enter Password Again" hint="Password must match previous password" v-model="password1" class="input-group--focused" @click:append="show1 = !show1"></v-text-field>
+                        <v-text-field :append-icon="showNewPassword ? 'mdi-eye' : 'mdi-eye-off'" :rules="passwordRules" :type="showNewPassword ? 'text' : 'password'" name="input-10-2" label="Set a Password" hint="At least 8 characters" class="input-group--focused" counter v-model="newPassword" @click:append="showNewPassword = !showNewPassword"></v-text-field>
+                        <v-text-field :append-icon="showConfirmNewPassword ? 'mdi-eye' : 'mdi-eye-off'" :rules="passwordMatchRules" :type="showConfirmNewPassword ? 'text' : 'password'" name="input-10-2" label="Enter Password Again" hint="Password must match previous password" counter v-model="confirmNewPassword" class="input-group--focused" @click:append="showConfirmNewPassword = !showConfirmNewPassword"></v-text-field>
                         <v-col class="text-center">
-                            <v-btn :ripple="{ center: true }">Get Started</v-btn>
+                            <v-btn :ripple="{ center: true }" @click="registerUser">Get Started</v-btn>
                         </v-col>
                         <v-col class="text-center">
                             <a @click="changeTab(1)">Already have an account</a>
                         </v-col>
                     </v-form>
                 </v-col>
-
                 <v-flex id="login" class="tab_item_container pad_container">
                     <h1 class="remove_margin">Welcome Back!</h1>
                     <h1 class="remove_margin">Login</h1>
                     <v-form action="/" method="post">
                         <v-text-field label="Cell-Phone Number" :rules="cellPhoneNumberRules" hint="Cell Phone Number excluding country code"></v-text-field>
-                        <v-text-field :append-icon="show3 ? 'mdi-eye' : 'mdi-eye-off'" :rules="[rules.required, rules.min]" :type="show5 ? 'text' : 'password'" name="input-10-2" label="Enter Password" hint="Password set when you registered" v-model="password3" class="input-group--focused" @click:append="show3 = !show3"></v-text-field>
+                        <v-text-field :append-icon="showLoginPassword ? 'mdi-eye' : 'mdi-eye-off'" :rules="passwordEntryRules" :type="showLoginPassword ? 'text' : 'password'" name="input-10-2" label="Enter Password" hint="Password set when you registered" v-model="loginPassword" class="input-group--focused" @click:append="showLoginPassword = !showLoginPassword"></v-text-field>
                         <v-col class="text-center">
                             <v-btn :ripple="{ center: true }">Login</v-btn>
                         </v-col>
@@ -43,7 +41,7 @@
             </v-flex><!-- tab-content -->
         </v-col> <!-- /form -->
         <!-- partial -->
-        <recoveryview v-if="showRecoveryOverlay"></recoveryview>
+        <recoveryview></recoveryview>
     </v-responsive>
 </v-flex>
 </template>
@@ -51,19 +49,14 @@
 <script>
 import countryList from 'country-list'
 import recoveryview from './PasswordRecoveryView'
+import swal from 'sweetalert2'
+import countriesApi from 'countries-api'
+
 export default {
     components: {
         recoveryview
     },
     data: () => ({
-        countries: [],
-        cellPhoneNumberRules: [
-            v => !!v || 'CellPhone number is required',
-            v => (v && v.length <= 10) || 'CellPhone number must be less than 10 characters and must exlcude the country code',
-        ],
-        rules: {
-            required: value => !!value || 'Required.'
-        },
         isRegistered: false,
         tab: null,
         tab_login: null,
@@ -74,28 +67,51 @@ export default {
         select: null,
         show_login: false,
         show_signup: true,
-        show1: false,
-        show2: false,
-        show3: false,
+        showNewPassword: false,
+        showConfirmNewPassword: false,
+        showLoginPassword: false,
         showRecoveryOverlay: false,
         country: '',
-        cellNumber: ''
+        cellNumber: '',
+        newPassword: '',
+        confirmNewPassword: '',
+        loginPassword: '',
+        countries: [],
+        cellPhoneNumberRules: [
+            v => (!!v) || 'CellPhone number is required',
+            v => (v && !isNaN(v) && v.length <= 10) || 'CellPhone number must be less than 10 characters and must exlcude the country code',
+        ],
+        passwordRules: [
+            value => !!value || 'Password is required.',
+            value => (value && new RegExp("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})").test(value)) || 'Passowrd must include an upper case character and a numeric value'
+        ],
+        passwordMatchRules: [
+            value => !!value || 'Confirm Password required'
+        ],
+        passwordEntryRules: [
+            value => !!value || 'Password is required.',
+        ]
     }),
     beforeMount() {
         this.getCountryList()
     },
     methods: {
+        registerUser() {
+            if (this.newPassword !== this.confirmNewPassword) {
+                this.error('Passwords dont match!!')
+            }
+        },
         accountRecoveryTab() {
-            this.showRecoveryOverlay = true
+            this.$store.state.passwordRecoveryDialog = true
         },
         getCountryList() {
-
-            countryList.getNames().map((country) => {
-                this.countries.push(country)
+            var countries = countriesApi.findByRegion('Africa')
+            countries.data.forEach((country) => {
+                this.countries.push(country.name.common)
             })
         },
         changeTab(whichTab) {
-            console.log('clicked on tab: ', whichTab)
+           // console.log('clicked on tab: ', whichTab)
             switch (whichTab) {
                 case 1:
                     document.getElementById('login').parentNode.classList.add('active')
@@ -112,6 +128,13 @@ export default {
                     document.getElementById('signup').classList.toggle('fade');
                     break;
             }
+        },
+        error(message) {
+            swal.fire({
+                icon: 'error',
+                title: 'Try Again',
+                text: message,
+            })
         }
 
     }

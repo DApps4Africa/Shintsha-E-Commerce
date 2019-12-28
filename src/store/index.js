@@ -4,6 +4,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state:{
-        registered:false
+        registered:false,
+        passwordRecoveryDialog:false
     }
 })

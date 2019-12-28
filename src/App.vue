@@ -14,11 +14,11 @@
             <v-icon>{{menuItem.icon}}</v-icon>
         </v-btn>
     </v-bottom-navigation>
-    <v-content style="width:100vw">
-        <v-container>
-            <router-view></router-view>
-        </v-container>
-    </v-content>
+      <v-content style="width:100vw">
+            <v-container>
+                <router-view></router-view>
+            </v-container>
+        </v-content>
 </v-app>
 </template>
 
@@ -57,7 +57,6 @@ export default {
 @import url('https://fonts.googleapis.com/css?family=Courgette&display=swap');
 
 #appName {
-    font-family: 'Courgette', cursive;
     font-size: 30px;
 }
 
