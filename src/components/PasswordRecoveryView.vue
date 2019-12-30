@@ -73,7 +73,8 @@ export default {
             cellPhoneNumberRules: [
                 v => !!v || 'CellPhone number is required',
                 v => (v && !isNaN(v) && v.length <= 10) || 'CellPhone number must be less than 10 characters and must exlcude the country code',
-            ]
+            ],
+            
         }
     },
     beforeMount() {

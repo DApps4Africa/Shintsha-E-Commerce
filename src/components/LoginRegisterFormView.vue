@@ -9,8 +9,15 @@
                         <v-col>
                             <h1 class="remove_margin">Sign Up</h1>
                         </v-col>
-                        <v-text-field label="Cell-Phone Number" v-model="cellNumber" :rules="cellPhoneNumberRules"></v-text-field>
-                        <v-select :items="countries" label="Country" v-model="country"></v-select>
+                        <v-row>
+                            <v-col cols="4">
+                                <v-select :items="countryCodes" :rules="countryCodeRules" label="Country Code" v-model="countryCode"></v-select>
+                            </v-col>
+                            <v-col cols="8">
+                                <v-text-field label="Cell-Phone Number" v-model="cellNumber" :rules="cellPhoneNumberRules"></v-text-field>
+                            </v-col>
+                        </v-row>
+                        <v-select :items="countries" label="Country" v-model="selectedCountry"></v-select>
                         <v-text-field :append-icon="showNewPassword ? 'mdi-eye' : 'mdi-eye-off'" :rules="passwordRules" :type="showNewPassword ? 'text' : 'password'" name="input-10-2" label="Set a Password" hint="At least 8 characters" class="input-group--focused" counter v-model="newPassword" @click:append="showNewPassword = !showNewPassword"></v-text-field>
                         <v-text-field :append-icon="showConfirmNewPassword ? 'mdi-eye' : 'mdi-eye-off'" :rules="passwordMatchRules" :type="showConfirmNewPassword ? 'text' : 'password'" name="input-10-2" label="Enter Password Again" hint="Password must match previous password" counter v-model="confirmNewPassword" class="input-group--focused" @click:append="showConfirmNewPassword = !showConfirmNewPassword"></v-text-field>
                         <v-col class="text-center">
@@ -25,7 +32,14 @@
                     <h1 class="remove_margin">Welcome Back!</h1>
                     <h1 class="remove_margin">Login</h1>
                     <v-form action="/" method="post">
-                        <v-text-field label="Cell-Phone Number" :rules="cellPhoneNumberRules" hint="Cell Phone Number excluding country code"></v-text-field>
+                        <v-row>
+                            <v-col cols="4">
+                                <v-select :items="countryCodes" :rules="countryCodeRules" label="Country Code" v-model="countryCode"></v-select>
+                            </v-col>
+                            <v-col cols="8">
+                                <v-text-field label="Cell-Phone Number" v-model="cellNumber" :rules="cellPhoneNumberRules"></v-text-field>
+                            </v-col>
+                        </v-row>
                         <v-text-field :append-icon="showLoginPassword ? 'mdi-eye' : 'mdi-eye-off'" :rules="passwordEntryRules" :type="showLoginPassword ? 'text' : 'password'" name="input-10-2" label="Enter Password" hint="Password set when you registered" v-model="loginPassword" class="input-group--focused" @click:append="showLoginPassword = !showLoginPassword"></v-text-field>
                         <v-col class="text-center">
                             <v-btn :ripple="{ center: true }">Login</v-btn>
@@ -77,6 +91,9 @@ export default {
         confirmNewPassword: '',
         loginPassword: '',
         countries: [],
+        countryCodes: [],
+        countryCode: '',
+        selectedCountry: '',
         cellPhoneNumberRules: [
             v => (!!v) || 'CellPhone number is required',
             v => (v && !isNaN(v) && v.length <= 10) || 'CellPhone number must be less than 10 characters and must exlcude the country code',
@@ -90,12 +107,32 @@ export default {
         ],
         passwordEntryRules: [
             value => !!value || 'Password is required.',
+        ],
+        countryCodeRules: [
+            v => !!v || 'Country Code Required',
+            v => (v && v.length > 0) || 'Country Code cannot be empty',
         ]
     }),
     beforeMount() {
         this.getCountryList()
     },
+    watch: {
+        countryCode: function (code) {
+            this.selectCountryUsingCode(code)
+            console.log('selectedCountryCode: ', code)
+        },
+        selectedCountry: function (country) {
+            this.selectCodeUsingCountry(country)
+            console.log('selectedCountry: ', country)
+        }
+    },
     methods: {
+        selectCountryUsingCode(code) {
+            this.selectedCountry = this.countries[this.countryCodes.indexOf(code)]
+        },
+        selectCodeUsingCountry(country) {
+            this.countryCode = this.countryCodes[this.countries.indexOf(country)]
+        },
         registerUser() {
             if (this.newPassword !== this.confirmNewPassword) {
                 this.error('Passwords dont match!!')
@@ -108,10 +145,11 @@ export default {
             var countries = countriesApi.findByRegion('Africa')
             countries.data.forEach((country) => {
                 this.countries.push(country.name.common)
+                this.countryCodes.push("+" + country.callingCode[0])
             })
         },
         changeTab(whichTab) {
-           // console.log('clicked on tab: ', whichTab)
+            // console.log('clicked on tab: ', whichTab)
             switch (whichTab) {
                 case 1:
                     document.getElementById('login').parentNode.classList.add('active')
