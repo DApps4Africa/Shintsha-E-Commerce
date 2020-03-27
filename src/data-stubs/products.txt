@@ -1,0 +1,18 @@
+[
+  '{{repeat(1, 50)}}',
+  {
+    product_id: '{{objectId()}}',
+    product_name:'{{firstName()}}',
+    farmer_phone_number:'{{phone()}}',
+    category:'{{random("Fruits","Vegatables")}}',
+    available:'{{bool()}}',
+    quantity:'{{integer(0, 200000000)}}',
+    country:'{{country()}}',
+    price:'{{floating(0.5, 10000.11)}}',
+    transaction_hash:function(){
+    return '0x0000000000000000000000000000000000000000000000000000000000000000';
+    }
+  }
+]
+
+@dev copy past the above schema on the website https://www.json-generator.com to generate more products if needed

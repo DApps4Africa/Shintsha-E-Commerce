@@ -6,6 +6,15 @@ export default new Vuex.Store({
     state:{
         registered:false,
         passwordRecoveryDialog:false,
-        userToRegister:{}
+        userToRegister:{},
+        selectedCategory:"",
+        registredProducts:[],
+        showPurchaseProductModal:false,
+        productToPurchase:{},
+        
+        cartItems:[],
+        cart:[],
+        users:[],
+        showProductDetailsModal: false,
     }
 })
