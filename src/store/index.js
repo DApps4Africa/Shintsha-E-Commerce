@@ -12,9 +12,8 @@ export default new Vuex.Store({
         showPurchaseProductModal:false,
         productToPurchase:{},
         
-        cartItems:[],
         cart:[],
-        users:[],
+        loged:false,
         showProductDetailsModal: false,
     }
 })

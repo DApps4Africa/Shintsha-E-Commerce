@@ -49,7 +49,7 @@
           title: "Customer Order",
           text:"As a fammer you will need to keep an eye on your customer order",
           btn: "Customer Order",
-          to: "/customerorder"
+          to: "/farmercustomerorder"
         }
       ]
     }),

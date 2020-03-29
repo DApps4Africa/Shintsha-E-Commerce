@@ -15,6 +15,7 @@
       />
       <v-badge
         :content="$store.state.cart.length"
+        color="black"
         overlap
         transition="slide-x-transition"
       >
@@ -87,6 +88,7 @@
 <script>
 import InfiniteLoading from 'vue-infinite-loading';
 import Loading from 'vue-loading-overlay';
+import swal from "sweetalert2";
 // Import stylesheet
 import 'vue-loading-overlay/dist/vue-loading.css';
 import purchaseModal from './PurchaseProductModal'
@@ -106,7 +108,6 @@ export default {
     },
     
     beforeMount() {
-
         console.log("Product cart", this.$store.state.cartItems.length);
         this.filterProducts();
     },
@@ -128,9 +129,14 @@ export default {
             this.$store.state.showPurchaseProductModal = true
         },
 
-        addToCart(product){
+        addToCart(product, message){
             this.$store.state.cart.push(product)
-            this.cart++;
+            this.cart++
+            swal.fire({
+                icon: "succes",
+                title: "Product added",
+                text: message
+            });
         },
 
         showDetails(product) {

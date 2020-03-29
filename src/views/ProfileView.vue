@@ -1,138 +1,103 @@
 <template>
-  <v-container>
-    <v-row no-gutters>
-      <v-col
-        cols="12"
-        sm="6"
-        md="8"
+  <v-row>
+    <v-col>
+      <v-app-bar
+        color="green darken-1"
+        dark
       >
-        <v-card id="profileCard">
-          <v-toolbar
-            color="#0d9436"
-            dark
-          >
-            <v-toolbar-title>My Profile</v-toolbar-title>
-            <v-spacer />
-          </v-toolbar>
-          <v-row>
-            <v-col>
-              <v-card>
-                <v-tabs
-                  v-model="tab"
-                  background-color="transparent"
-                  color="basil"
-                  grow
-                >
-                  <v-tab
-                    v-for="tab in options"
-                    :key="tab.title"
+        <v-toolbar-title>My Profile</v-toolbar-title>
+      </v-app-bar><br>
+      <v-row
+        justify="center"
+      >
+        <v-card
+          width="75%"
+        >
+          <v-card-title>
+            Farmer
+          </v-card-title>
+          <v-card-text>
+            <v-container>
+              <v-raw>
+                <v-col>
+                  <div
+                    class="app-header text-center"
+                    justify="center"
                   >
-                    {{ tab.title }}
-                  </v-tab>
-                </v-tabs>
-                <v-tabs-items v-model="tab">
-                  <v-tab-item value="tab-1">
-                    <v-card flat>
-                      <v-card-text>test</v-card-text>
-                    </v-card>
-                  </v-tab-item>
-                  <v-tab-item value="tab-1">
-                    <v-card flat>
-                      <v-card-text>test</v-card-text>
-                    </v-card>
-                  </v-tab-item>
-                </v-tabs-items>
-              </v-card>
-            </v-col>
-          </v-row>
-          <v-row justify="center">
-            <v-col
-              cols="12"
-              sm="12"
-              md="6"
-            >
-              <v-row align="center">
-                <v-overlay
-                  class="ovr_lay"
-                  color="transparent"
-                  :absolute="false"
-                  :opacity="1"
-                  :value="!this.$store.state.registered"
-                  :z-index="1"
-                  light
-                >
-                  <vloginform />
-                </v-overlay>
-              </v-row>
-            </v-col>
-          </v-row>
+                    <h1>Name</h1>
+                    <h2>
+                      A Decentralized
+                    </h2>
+                  </div>
+                </v-col>
+                <v-col>
+                  <v-row
+                    class="pad_left "
+                    justify="end"
+                    align="start"
+                  >
+                    <v-avatar
+                      color="orange"
+                      size="62"
+                    >
+                      <img
+                        src="https://cdn.vuetifyjs.com/images/john.jpg"
+                        alt="John"
+                      >
+                    </v-avatar>
+                  </v-row>
+                </v-col>
+              </v-raw>
+            </v-container>
+          </v-card-text>
         </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+      </v-row>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
-import vloginform from "../components/LoginRegisterFormView";
 export default {
-  components: {
-    vloginform
-  },
-  data: () => ({
-    options: [
-      {
-        title: "Register as Farmer"
-      },
-      {
-        title: "Register as Consumer"
-      },
-      {
-        title: "Register as Delivery Services"
-      }
-    ],
-    isRegistered: false,
-    tab: null
-  }),
-  beforeMount() {
-    this.isRegistered = this.$store.state.registered;
-    //console.log(this.isRegistered)
-  },
-  methods: {}
-};
-</script>
+  data() {
+    return {
 
+    }
+  }
+}
+</script>
+  
 <style scoped>
 .fit_screen {
-  height: 100%;
-  width: 100%;
+    height: 100%;
+    width: 100%;
 }
 
 html {
-  overflow-y: scroll;
+    overflow-y: scroll;
 }
 
 body {
-  position: absolute;
+    position: absolute;
 }
 
 .v-overlay__content {
-  height: 65%;
+    height: 65%;
 }
 
 .transparent_custom {
-  color: rgba(255, 255, 255, 0.041);
+    color: rgba(255, 255, 255, 0.041);
 }
 
 .ovr_lay {
-  background-image: linear-gradient(45deg, skyblue, green);
-  background-color: transparent;
+    background-image: linear-gradient(45deg, skyblue, green);
+    background-color: transparent;
 }
 
 .v-overlay__scrim {
-  background-image: linear-gradient(45deg, skyblue, green);
+    background-image: linear-gradient(45deg, skyblue, green);
 }
 
 .v-overlay__content {
-  height: 60%;
+    height: 60%;
 }
 </style>
