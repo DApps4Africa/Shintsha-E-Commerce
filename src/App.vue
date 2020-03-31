@@ -46,11 +46,15 @@
         <v-icon>{{ menuItem.icon }}</v-icon>
       </v-btn>
     </v-bottom-navigation>
-    <v-content style="width:100vw">
-      <v-container>
-        <router-view />
-      </v-container>
-    </v-content>
+    <v-content>
+
+    <!-- Provides the application the proper gutter -->
+    <v-container style="width:100vw;" fluid>
+
+      <!-- If using vue-router -->
+      <router-view></router-view>
+    </v-container>
+  </v-content>
   </v-app>
 </template>
 

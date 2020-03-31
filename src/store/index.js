@@ -13,7 +13,7 @@ export default new Vuex.Store({
         productToPurchase:{},
         
         cart:[],
-        loged:false,
+        user: require("../data-stubs/users").default,
         showProductDetailsModal: false,
     }
 })

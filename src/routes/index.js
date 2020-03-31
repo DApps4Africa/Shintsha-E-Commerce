@@ -19,10 +19,11 @@ Vue.use(Router)
 export default new Router({
     routes: [{
             path: "/",
-            redirect: "profileview"
+            redirect: "loginview"
         },
         {
             path: "/profileview",
+            props: true,
             name: "profileview",
             component: ProfileView
         },
