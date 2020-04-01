@@ -25,6 +25,7 @@
       </v-btn>
     </v-app-bar>
     <v-bottom-navigation
+      v-if="$store.state.isLoggedIn"
       cols="12"
       sm="8"
       md="4"
@@ -47,14 +48,15 @@
       </v-btn>
     </v-bottom-navigation>
     <v-content>
-
-    <!-- Provides the application the proper gutter -->
-    <v-container style="width:100vw;" fluid>
-
-      <!-- If using vue-router -->
-      <router-view></router-view>
-    </v-container>
-  </v-content>
+      <!-- Provides the application the proper gutter -->
+      <v-container
+        style="width:100vw;"
+        fluid
+      >
+        <!-- If using vue-router -->
+        <router-view />
+      </v-container>
+    </v-content>
   </v-app>
 </template>
 
@@ -64,27 +66,32 @@ export default {
     data() {
         return {
             activeBtn: 1,
-            menuItems: [{
-                    to: "/profileview",
-                    icon: "person",
-                    text: "Profile"
-                },
-                {
-                    to: "/productview",
-                    icon: "local_florist",
-                    text: "Products"
-                },
-                {
-                    to: "/marketplaceview",
-                    icon: "storefront",
-                    text: "MarketPlace"
-                },
-                {
-                    to: "/deliveryserviceview",
-                    icon: "local_shipping",
-                    text: "Delivery Services"
-                }
-            ]
+            menuItems: [
+              { to: "/",
+                redirect: "/loginview"
+
+              },
+              {
+                to: "/profileview",
+                icon: "mdi-account",
+                text: "Profile"
+              },
+              {
+                to: "/productview",
+                icon: "local_florist",
+                text: "Products"
+              },
+              {
+                to: "/marketplaceview",
+                icon: "storefront",
+                text: "MarketPlace"
+              },
+              {
+                to: "/deliveryserviceview",
+                icon: "local_shipping",
+                text: "Delivery Services"
+              }
+            ],
         };
     },
     mounted(){

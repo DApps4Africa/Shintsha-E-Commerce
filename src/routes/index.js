@@ -13,6 +13,7 @@ import FarmerProductView from '../components/product_components/FarmerProductVie
 import FarmerCustomerOrder from '../components/product_components/FarmerCustomerOrder';
 import AddProduct from '../components/product_components/AddProduct';
 import DashboardView from '../components/DashboardView';
+import VerifyNumberView from '../components/profile_components/VerifyNumberView';
 
 Vue.use(Router)
 
@@ -77,6 +78,11 @@ export default new Router({
             path: "/addproduct",
             name: "addproduct",
             component: AddProduct
+        },
+        {
+            path: "/verifynumberview",
+            name: "verifynumberview",
+            component: VerifyNumberView
         }
     ],
     mode: "history"

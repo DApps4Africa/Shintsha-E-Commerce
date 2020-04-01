@@ -116,7 +116,10 @@
                 @click:append="showLoginPassword = !showLoginPassword"
               />
               <v-col class="text-center">
-                <v-btn :ripple="{ center: true }">
+                <v-btn
+                  :ripple="{ center: true }"
+                  to="/profileview"
+                >
                   Login
                 </v-btn>
               </v-col>
@@ -153,7 +156,7 @@ import request from "request";
 
 export default {
     components: {
-        recoveryview
+        recoveryview,
     },
     data: () => ({
         isRegistered: false,
@@ -228,6 +231,9 @@ export default {
         registerUser() {
             if (this.newPassword !== this.confirmNewPassword) {
                 this.error("Passwords dont match!!");
+            }
+            else{
+              this.$router.push("/verifynumbermodal")
             }
         },
         accountRecoveryTab() {

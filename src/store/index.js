@@ -12,6 +12,8 @@ export default new Vuex.Store({
         showPurchaseProductModal:false,
         productToPurchase:{},
         
+        showVerifyNumberModal:false,
+        isLoggedIn: false,
         cart:[],
         user: require("../data-stubs/users").default,
         showProductDetailsModal: false,
