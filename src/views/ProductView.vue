@@ -1,5 +1,11 @@
 <template>
   <v-col>
+    <v-app-bar
+      color="green darken-1"
+      dark
+    >
+      <v-toolbar-title>Select Product Option</v-toolbar-title>
+    </v-app-bar>
     <v-row
       align="center"
       justify="center"

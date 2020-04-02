@@ -1,50 +1,59 @@
 <template>
-  <v-flex
-    class="flex_custom"
-  >
-    <v-col class="form">
-      <h1 class="remove_margin">
-        Add Product
-      </h1>
-      <v-form
-        action="/"
-        method="post"
-      >
-        <v-row>
-          <v-col cols="4">
-            <v-text-field
-              :items="productName"
-              label="Product Name"
-              v-model="countryCode"
-            />
+  <v-container fluid>
+    <v-app-bar
+      color="green darken-1"
+      dark
+    >
+      <v-toolbar-title>Add you new product</v-toolbar-title>
+    </v-app-bar>
+    <v-content
+      class="flex_custom"
+      fluid
+    >
+      <v-col class="form">
+        <h1 class="remove_margin">
+          Add Product
+        </h1>
+        <v-form
+          action="/"
+          method="post"
+        >
+          <v-row>
+            <v-col cols="4">
+              <v-text-field
+                :items="productName"
+                label="Product Name"
+                v-model="countryCode"
+              />
+            </v-col>
+            <v-col cols="8">
+              <v-select
+                :items="category"
+                label="Category"
+                v-model="category"
+              />
+            </v-col>
+          </v-row>
+          <v-text-field
+            label="Cell-Phone Number"
+            v-model="farmerPhoneNumber"
+            :rules="farmerPhoneNumberRules"
+          />
+          <v-text-field
+            :items="countryCodes"
+            :rules="countryCodeRules"
+            label="Country Code"
+            v-model="countryCode"
+          />
+          <v-col class="text-center">
+            <v-btn :ripple="{ center: true }">
+              Add to my listing
+            </v-btn>
           </v-col>
-          <v-col cols="8">
-            <v-select
-              :items="category"
-              label="Category"
-              v-model="category"
-            />
-          </v-col>
-        </v-row>
-        <v-text-field
-          label="Cell-Phone Number"
-          v-model="farmerPhoneNumber"
-          :rules="farmerPhoneNumberRules"
-        />
-        <v-text-field
-          :items="countryCodes"
-          :rules="countryCodeRules"
-          label="Country Code"
-          v-model="countryCode"
-        />
-        <v-col class="text-center">
-          <v-btn :ripple="{ center: true }">
-            Add to my listing
-          </v-btn>
-        </v-col>
-      </v-form>
-    </v-col>
-  </v-flex>
+        </v-form>
+      </v-col>
+    </v-content>
+  </v-container>
 </template>
 
 <script>

@@ -233,7 +233,7 @@ export default {
                 this.error("Passwords dont match!!");
             }
             else{
-              this.$router.push("/verifynumbermodal")
+              this.$router.push("/verifynumberview")
             }
         },
         accountRecoveryTab() {
