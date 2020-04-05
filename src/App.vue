@@ -6,23 +6,10 @@
       color="#0d9436"
       dark
     >
-      <v-btn
-        class="transparent"
-        text
-      >
-        <v-toolbar-title
-          id="appName"
-          :ripple="{ center: true }"
-        >
-          Shintsha
-        </v-toolbar-title>
-      </v-btn>
-      <v-btn icon>
-        <v-icon
-          to="/"
-          :ripple="{ center: true }"
-        />
-      </v-btn>
+      <v-img
+        :src="require('./assets/ShintshaCaseBlack.png')"
+        max-width="250"
+      />
     </v-app-bar>
     <v-bottom-navigation
       v-if="$store.state.isLoggedIn"
