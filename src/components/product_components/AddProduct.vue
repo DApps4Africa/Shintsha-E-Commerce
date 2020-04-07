@@ -1,115 +1,146 @@
 <template>
-  <v-container fluid>
-    <v-app-bar
-      color="green darken-1"
-      dark
-    >
-      <v-toolbar-title>Add you new product</v-toolbar-title>
-    </v-app-bar>
-    <v-content
-      class="flex_custom"
+  <v-app id="inspire">
+    <v-container
+      class="fill-height"
       fluid
     >
-      <v-col class="form">
-        <h1 class="remove_margin">
-          Add Product
-        </h1>
-        <v-form
-          action="/"
-          method="post"
+      <v-row
+        align="center"
+        justify="center"
+        sm="8"
+        md="4"
+      >
+        <v-col
+          cols="12"
+          sm="8"
+          md="4"
         >
-          <v-row>
-            <v-col cols="4">
-              <v-text-field
-                :items="productName"
-                label="Product Name"
-                v-model="countryCode"
+          <v-card
+            shaped
+            class="mx-auto"
+            max-width="500"
+          >
+            <v-card-title class="title font-weight-regular justify-space-between">
+              <span>{{ currentTitle }}</span>
+              <v-avatar
+                color="green darken-2"
+                class="subheading white--text"
+                size="24"
+                v-text="step"
               />
-            </v-col>
-            <v-col cols="8">
-              <v-select
-                :items="category"
-                label="Category"
-                v-model="category"
-              />
-            </v-col>
-          </v-row>
-          <v-text-field
-            label="Cell-Phone Number"
-            v-model="farmerPhoneNumber"
-            :rules="farmerPhoneNumberRules"
-          />
-          <v-text-field
-            :items="countryCodes"
-            :rules="countryCodeRules"
-            label="Country Code"
-            v-model="countryCode"
-          />
-          <v-col class="text-center">
-            <v-btn :ripple="{ center: true }">
-              Add to my listing
-            </v-btn>
-          </v-col>
-        </v-form>
-      </v-col>
-    </v-content>
-  </v-container>
+            </v-card-title>
+
+            <v-window v-model="step">
+              <v-window-item :value="1">
+                <v-card-text>
+                  <v-text-field
+                    :items="productName"
+                    label="Product Name"
+                    v-model="countryCode"
+                  />
+                  <v-select
+                    :items="category"
+                    label="Category"
+                    v-model="category"
+                  />
+                  <span class="caption grey--text text--darken-1">
+                    All the product belong to a category
+                  </span>
+                </v-card-text>
+              </v-window-item>
+
+              <v-window-item :value="2">
+                <v-card-text>
+                  <v-text-field
+                    label="Cell-Phone Number"
+                    v-model="farmerPhoneNumber"
+                    :rules="farmerPhoneNumberRules"
+                  />
+                  <v-text-field
+                    :items="countryCodes"
+                    :rules="countryCodeRules"
+                    label="Country Code"
+                    v-model="countryCode"
+                  />
+                  <span class="caption grey--text text--darken-1">
+                    Please enter a phone number with the country code
+                  </span>
+                </v-card-text>
+              </v-window-item>
+
+              <v-window-item :value="3">
+                <div class="pa-4 text-center">
+                  <v-img
+                    class="mb-4"
+                    contain
+                    height="128"
+                    href="../assets/CaseBlack.png"
+                  />
+                  <h3 class="title font-weight-light mb-2">
+                    Congratulations
+                  </h3>
+                  <span class="caption grey--text">Your Product was added to the listing!</span>
+                </div>
+              </v-window-item>
+            </v-window>
+
+            <v-divider />
+
+            <v-card-actions>
+              <v-btn
+                :disabled="step === 1"
+                text
+                @click="step--"
+              >
+                Back
+              </v-btn>
+              <v-spacer />
+              <v-btn
+                :disabled="step === 3"
+                color="green darken-2"
+                depressed
+                @click="step++"
+              >
+                Next
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-app>
 </template>
 
 <script>
-export default {
+  export default {
     data: () => ({
-        productName: "",
-        category: [],
-        country: "",
-        farmerPhoneNumber: "",
-        countries: [],
-        countryCodes: [],
-        countryCode: "",
-        selectedCountry: "",
-        farmerPhoneNumberRules: [
-            v => !!v || "CellPhone number is required",
-            v =>
-            (v && !isNaN(v) && v.length <= 10) ||
-            "CellPhone number must be less than 10 characters and must exlcude the country code"
-        ],
-        countryCodeRules: [
-            v => !!v || "Country Code Required",
-            v => (v && v.length > 0) || "Country Code cannot be empty"
-        ]
-    })
-}
+      step: 1,
+      productName: "",
+      category: [],
+      country: "",
+      farmerPhoneNumber: "",
+      countries: [],
+      countryCodes: [],
+      countryCode: "",
+      selectedCountry: "",
+      farmerPhoneNumberRules: [
+        v => !!v || "CellPhone number is required",
+        v => (v && !isNaN(v) && v.length <= 10) || "CellPhone number must be less than 10 characters and must exlcude the country code"
+      ],
+      countryCodeRules: [
+        v => !!v || "Country Code Required",
+        v => (v && v.length > 0) || "Country Code cannot be empty"
+      ]  
+    }),
+
+    computed: {
+      currentTitle () {
+        switch (this.step) {
+          case 1: return 'Name & Category'
+          case 2: return 'Phone Number & Country Code'
+          default: return 'Product added'
+        }
+      },
+    },
+  }
 </script>
-
-<style scoped>
-.flex_custom {
-    background-image: linear-gradient(45deg, skyblue, green);
-    height: 30%;
-    padding-bottom: 30px;
-    padding-top: 10px;
-}
-
-.form {
-    background-image: linear-gradient(45deg, skyblue, green);
-    padding: 40px;
-    max-width: 600px;
-    margin: 40px auto;
-    border-radius: 4px;
-    box-shadow: 0 4px 10px 4px rgba(19, 35, 47, 0.3);
-}
-
-.button {
-    border: 0;
-    outline: none;
-    border-radius: 0;
-    padding: 15px 0;
-    font-size: 2rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    background: #1ab188;
-    color: #ffffff;
-    transition: all 0.5s ease;
-    -webkit-appearance: none;
-}
-</style>

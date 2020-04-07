@@ -1,5 +1,8 @@
 <template>
-  <v-container fluid>
+  <v-container
+    fluid
+    class="ovr_lay"
+  >
     <v-app-bar>
       <v-toolbar-title>My Profile</v-toolbar-title>
     </v-app-bar>
@@ -9,7 +12,6 @@
     >
       <v-col>
         <v-card
-          style="width:100%"
           fluid
         >
           <v-container>
@@ -24,7 +26,6 @@
                   centered
                   icons-and-text
                 >
-                  <v-tabs-slider />
                   <v-tab href="#profile">
                     Profile
                     <v-icon>mdi-account</v-icon>
@@ -248,23 +249,6 @@ export default {
 </script>
 
 <style scoped>
-.fit_screen {
-    height: 100%;
-    width: 100%;
-}
-
-html {
-    overflow-y: scroll;
-}
-
-body {
-    position: absolute;
-}
-
-.v-overlay__content {
-    height: 65%;
-}
-
 .transparent_custom {
     color: rgba(255, 255, 255, 0.041);
 }
@@ -272,13 +256,5 @@ body {
 .ovr_lay {
     background-image: linear-gradient(45deg, skyblue, green);
     background-color: transparent;
-}
-
-.v-overlay__scrim {
-    background-image: linear-gradient(45deg, skyblue, green);
-}
-
-.v-overlay__content {
-    height: 60%;
 }
 </style>

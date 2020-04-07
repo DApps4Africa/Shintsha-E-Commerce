@@ -1,9 +1,6 @@
 <template>
   <v-col>
-    <v-app-bar
-      color="green darken-1"
-      dark
-    >
+    <v-app-bar>
       <v-toolbar-title>Product</v-toolbar-title>
       <v-spacer />
       <v-text-field

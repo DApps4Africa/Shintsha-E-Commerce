@@ -1,9 +1,6 @@
 <template>
   <v-col>
-    <v-app-bar
-      color="green darken-1"
-      dark
-    >
+    <v-app-bar>
       <v-toolbar-title>Category</v-toolbar-title>
     </v-app-bar>
     <v-row

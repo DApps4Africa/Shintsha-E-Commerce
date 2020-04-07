@@ -1,9 +1,10 @@
 <template>
-  <v-col>
-    <v-app-bar
-      color="green darken-1"
-      dark
-    >
+  <v-content
+    style="width:100vw; height:100vh; padding:0px;"
+    class="ovr_lay"
+    fluid
+  >
+    <v-app-bar class="app_bar">
       <v-toolbar-title>Select Product Option</v-toolbar-title>
     </v-app-bar>
     <v-row
@@ -15,8 +16,6 @@
         :key="i"
         :to="item.to"
         class="ma-3 pa-6"
-        color="green darken-1"
-        dark
         max-width="400"
       >
         <v-card-title>
@@ -38,7 +37,7 @@
         </v-card-actions>
       </v-card>
     </v-row>
-  </v-col>
+  </v-content>
 </template>
 
 <script>
@@ -61,3 +60,19 @@
     }),
   }
 </script>
+<style scoped>
+.app_bar {
+  background-image: linear-gradient(45deg, skyblue, green)
+}
+.ovr_lay {
+  background-image: linear-gradient(45deg, skyblue, green);
+  background-color: transparent;
+}
+html {
+    overflow-y: scroll;
+}
+
+body {
+    position: absolute;
+}
+</style>

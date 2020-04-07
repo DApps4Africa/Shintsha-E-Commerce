@@ -1,9 +1,8 @@
 <template>
-  <v-col>
-    <v-app-bar
-      color="green darken-1"
-      dark
-    >
+  <v-col
+    class="ovr_lay"
+  >
+    <v-app-bar>
       <v-toolbar-title>Farmer Product Management</v-toolbar-title>
     </v-app-bar>
     <v-row
@@ -15,8 +14,6 @@
         :key="i"
         :to="item.to"
         class="ma-3 pa-6"
-        color="green darken-1"
-        dark
         max-width="400"
       >
         <v-card-title>
@@ -61,3 +58,9 @@
     }),
   }
 </script>
+<style scoped>
+.ovr_lay {
+  background-image: linear-gradient(45deg, skyblue, green);
+  background-color: transparent;
+}
+</style>
