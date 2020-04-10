@@ -1,43 +1,46 @@
 <template>
-  <v-content
-    style="width:100vw; height:100vh; padding:0px;"
-    class="ovr_lay"
+  <v-container
     fluid
+    class="ovr_lay"
   >
-    <v-app-bar class="app_bar">
+    <v-app-bar>
       <v-toolbar-title>Select Product Option</v-toolbar-title>
     </v-app-bar>
-    <v-row
-      align="center"
-      justify="center"
-    >
-      <v-card
-        v-for="(item,i) in items"
-        :key="i"
-        :to="item.to"
-        class="ma-3 pa-6"
-        max-width="400"
+    <v-col>
+      <v-row
+        align="center"
+        justify="center"
       >
-        <v-card-title>
-          <span class="title font-weight-light">{{ item.title }}</span>
-        </v-card-title>
+        <v-card
+          v-for="(item,i) in items"
+          :key="i"
+          :to="item.to"
+          class="ma-3 pa-6"
+          max-width="300"
+          fluid
+          shaped
+        >
+          <v-card-title>
+            <span class="title font-weight-light">{{ item.title }}</span>
+          </v-card-title>
 
-        <v-card-text class="headline font-weight-bold">
-          {{ item.text }}
-        </v-card-text>
+          <v-card-text class="headline font-weight-bold">
+            {{ item.text }}
+          </v-card-text>
 
-        <v-card-actions>
-          <v-col class="text-center">
-            <v-btn
-              :ripple="{ center: true }"
-            >
-              {{ item.btn }}
-            </v-btn>
-          </v-col>
-        </v-card-actions>
-      </v-card>
-    </v-row>
-  </v-content>
+          <v-card-actions>
+            <v-col class="text-center">
+              <v-btn
+                :ripple="{ center: true }"
+              >
+                {{ item.btn }}
+              </v-btn>
+            </v-col>
+          </v-card-actions>
+        </v-card>
+      </v-row>
+    </v-col>
+  </v-container>
 </template>
 
 <script>

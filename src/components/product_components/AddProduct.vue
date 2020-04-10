@@ -1,7 +1,7 @@
 <template>
   <v-app id="inspire">
     <v-container
-      class="fill-height"
+      class="ovr_lay"
       fluid
     >
       <v-row
@@ -144,3 +144,14 @@
     },
   }
 </script>
+
+<style scoped>
+.transparent_custom {
+    color: rgba(255, 255, 255, 0.041);
+}
+
+.ovr_lay {
+    background-image: linear-gradient(45deg, skyblue, green);
+    background-color: transparent;
+}
+</style>

@@ -1,5 +1,8 @@
 <template>
-  <v-col>
+  <v-container
+    fluid
+    class="ovr_lay"
+  >
     <v-app-bar>
       <v-toolbar-title>Product</v-toolbar-title>
       <v-spacer />
@@ -26,60 +29,62 @@
         </v-hover>
       </v-badge>
     </v-app-bar>
-    <v-row
-      align="center"
-      justify="space-around"
-    >
-      <template>
-        <v-card
-          v-for="(product ,$index) in products"
-          :key="$index"
-          class="mx-auto my-12"
-          width="350"
-        >
-          <v-card-title>{{ product.product_name }}</v-card-title>
-          <v-img 
-            src=""
-            height="100px" 
-          />
-          <v-card-title>Details</v-card-title>
-          <v-card-text>
-            <div class="my-4 subtitle-1">
-              <b>Country</b> <br> {{ product.country }} <br>
-              <b>Quantity</b><br>
-              <div>{{ product.quantity }} KG left</div>
-              <b>Price</b> <br> {{ product.price }} {{ localCurrency }} <br>
-              <b> Available</b> {{ product.available? "Yes":"No" }}
-            </div>
-          </v-card-text>
-          <v-card-actions>
-            <v-btn
-              color="deep-purple lighten-2"
-              text
-              @click="addToCart(product)"
-            >
-              Add To Cart
-            </v-btn>
-            <v-spacer />
-            <v-btn
-              color="deep-grey lighten-2"
-              text
-              @click="showDetails(product)"
-            >
-              More Details
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </template>
-    </v-row>
+    <v-col>
+      <v-row
+        align="center"
+        justify="space-around"
+      >
+        <template>
+          <v-card
+            v-for="(product ,$index) in products"
+            :key="$index"
+            class="mx-auto my-12"
+            width="350"
+          >
+            <v-card-title>{{ product.product_name }}</v-card-title>
+            <v-img 
+              src=""
+              height="100px" 
+            />
+            <v-card-title>Details</v-card-title>
+            <v-card-text>
+              <div class="my-4 subtitle-1">
+                <b>Country</b> <br> {{ product.country }} <br>
+                <b>Quantity</b><br>
+                <div>{{ product.quantity }} KG left</div>
+                <b>Price</b> <br> {{ product.price }} {{ localCurrency }} <br>
+                <b> Available</b> {{ product.available? "Yes":"No" }}
+              </div>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn
+                color="deep-purple lighten-2"
+                text
+                @click="addToCart(product)"
+              >
+                Add To Cart
+              </v-btn>
+              <v-spacer />
+              <v-btn
+                color="deep-grey lighten-2"
+                text
+                @click="showDetails(product)"
+              >
+                More Details
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </template>
+      </v-row>
 
-    <loading
-      :active.sync="isLoading"
-      :is-full-page="true"
-    />
-    <infinite-loading @infinite="filterProducts" />
-    <purchaseModal />
-  </v-col>
+      <loading
+        :active.sync="isLoading"
+        :is-full-page="true"
+      />
+      <infinite-loading @infinite="filterProducts" />
+      <purchaseModal />
+    </v-col>
+  </v-container>
 </template>
 
 <script>
@@ -151,3 +156,14 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.transparent_custom {
+    color: rgba(255, 255, 255, 0.041);
+}
+
+.ovr_lay {
+    background-image: linear-gradient(45deg, skyblue, green);
+    background-color: transparent;
+}
+</style>

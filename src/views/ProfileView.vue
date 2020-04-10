@@ -7,12 +7,12 @@
       <v-toolbar-title>My Profile</v-toolbar-title>
     </v-app-bar>
     <v-row
-      fluid
       justify="center"
     >
       <v-col>
         <v-card
           fluid
+          shaped
         >
           <v-container>
             <v-row justify="center">
@@ -163,7 +163,7 @@
               <v-card-text>
                 <v-text-field label="CellPhone" />
                 <v-text-field label="Amount" />
-                <small class="grey--text">* Please give us your phone number to proceed the transaction.</small>
+                <small class="grey--text">* Please give us your phone number to proceed the deposit.</small>
               </v-card-text>
 
               <v-card-actions>
@@ -171,7 +171,7 @@
 
                 <v-btn
                   text
-                  color="primary"
+                  color="green darken-2"
                   @click="dialog = false"
                 >
                   Submit

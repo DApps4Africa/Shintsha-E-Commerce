@@ -1,9 +1,9 @@
 <template>
-  <v-col>
-    <v-app-bar
-      color="green darken-1"
-      dark
-    >
+  <v-container
+    fluid
+    class="ovr_lay"
+  >
+    <v-app-bar>
       <v-toolbar-title>Customer's Orders</v-toolbar-title>
       <v-spacer />
       <v-text-field
@@ -14,39 +14,41 @@
         hide-details
       />
     </v-app-bar>
-    <v-data-table
-      :headers="headers"
-      :items="$store.state.cart"
-      class="elevation-0"
-      hide-default-footer
-    >
-      <template
-        slot="items"
-        slot-scope="product"
+    <v-col>
+      <v-data-table
+        :headers="headers"
+        :items="$store.state.cart"
+        class="elevation-0"
+        hide-default-footer
       >
-        <tr>
-          <td>{{ product.product_id }}</td>
-          <td>{{ product.product_name }}</td>
-          <td>{{ product.quantity }}</td>
-          <td>{{ product.price }}</td>
-          <td>
-            <v-btn>
-              <v-icon
-                @click="deleteProduct(product)"
-              >
-                delete_forever
-              </v-icon>
-              <v-icon
-                @click="editProduct(product)"
-              >
-                create
-              </v-icon>
-            </v-btn>
-          </td>
-        </tr>
-      </template>
-    </v-data-table>
-  </v-col>
+        <template
+          slot="items"
+          slot-scope="product"
+        >
+          <tr>
+            <td>{{ product.product_id }}</td>
+            <td>{{ product.product_name }}</td>
+            <td>{{ product.quantity }}</td>
+            <td>{{ product.price }}</td>
+            <td>
+              <v-btn>
+                <v-icon
+                  @click="deleteProduct(product)"
+                >
+                  delete_forever
+                </v-icon>
+                <v-icon
+                  @click="editProduct(product)"
+                >
+                  create
+                </v-icon>
+              </v-btn>
+            </td>
+          </tr>
+        </template>
+      </v-data-table>
+    </v-col>
+  </v-container>
 </template>
 
 <script>
@@ -88,3 +90,14 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.transparent_custom {
+    color: rgba(255, 255, 255, 0.041);
+}
+
+.ovr_lay {
+    background-image: linear-gradient(45deg, skyblue, green);
+    background-color: transparent;
+}
+</style>

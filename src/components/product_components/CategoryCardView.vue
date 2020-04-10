@@ -1,36 +1,41 @@
 <template>
-  <v-col>
+  <v-container
+    fluid
+    class="ovr_lay"
+  >
     <v-app-bar>
       <v-toolbar-title>Category</v-toolbar-title>
     </v-app-bar>
-    <v-row
-      align="center"
-      justify="space-around"
-    >
-      <template>
-        <v-card
-          v-for="(item,i) in items"
-          :key="i"
-          class="mx-auto my-12"
-          max-width="300"
-          @click="updateClickedCategory(item.title,item.to)"
-        >
-          <v-img
-            src=""
-            height="100px"
-          />
+    <v-col>
+      <v-row
+        align="center"
+        justify="space-around"
+      >
+        <template>
+          <v-card
+            v-for="(item,i) in items"
+            :key="i"
+            class="mx-auto my-12"
+            max-width="300"
+            @click="updateClickedCategory(item.title,item.to)"
+          >
+            <v-img
+              src=""
+              height="100px"
+            />
 
-          <v-card-title>
-            {{ item.title }}
-          </v-card-title>
+            <v-card-title>
+              {{ item.title }}
+            </v-card-title>
 
-          <v-card-subtitle>
-            {{ item.subtitle }}
-          </v-card-subtitle>
-        </v-card>
-      </template>
-    </v-row>
-  </v-col>
+            <v-card-subtitle>
+              {{ item.subtitle }}
+            </v-card-subtitle>
+          </v-card>
+        </template>
+      </v-row>
+    </v-col>
+  </v-container>
 </template>
 
 <script>
@@ -59,6 +64,12 @@
           to: "/"
         },
         {
+          title: "Milk",
+          subtitle:"They are primarily produced from mammals such as cattle, water buffaloes, goats, sheep, camels and humans. Dairy products include food items such as yogurt, cheese and butter.",
+          btn: "See More",
+          to: "/"
+        },
+        {
           title: "Cereals",
           subtitle:"Dairy products or milk products are a type of food produced from or containing the milk of mammals. They are primarily produced from mammals such as cattle.",
           btn: "See More",
@@ -81,3 +92,14 @@
     }
   }
 </script>
+
+<style scoped>
+.transparent_custom {
+    color: rgba(255, 255, 255, 0.041);
+}
+
+.ovr_lay {
+    background-image: linear-gradient(45deg, skyblue, green);
+    background-color: transparent;
+}
+</style>
